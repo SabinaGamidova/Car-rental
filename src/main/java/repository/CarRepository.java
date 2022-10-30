@@ -151,8 +151,28 @@ public class CarRepository {
     }
 
     public List<Car> getByCarComfort(CarComfort carComfort) {
-        /*SELECT * FROM car WHERE car_comfort_id='?' AND status*/
-        return null;
+        String GET_BY_CAR_COMFORT = "SELECT * FROM car WHERE car_comfort_id=? AND status";
+        try (PreparedStatement statement = connection.prepareStatement(GET_BY_CAR_COMFORT)) {
+            disableAutoCommit();
+            statement.setObject(1, carComfort.getId());
+            ResultSet resultSet = statement.executeQuery();
+
+            List<Car> list = new ArrayList<>();
+            while (resultSet.next()) {
+                Car car = (Car) Mapper.mapSingleFromResultSet(resultSet, Car.class);
+                list.add(car);
+            }
+
+            resultSet.close();
+            return list;
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            rollbackTransaction();
+            throw new RuntimeException(exception);
+        }
+        finally {
+            enableAutoCommit();
+        }
     }
 
     private void disableAutoCommit() {
