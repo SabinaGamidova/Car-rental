@@ -1,10 +1,13 @@
+package migration;
+
 import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.Flyway;
+import properties.PropsLoader;
 
 import java.util.Properties;
 
 @Slf4j
-public final class MigrationTool {
+public final class MigrationManager {
     private static final String PROPERTIES_PATH = "/jdbc.properties";
     private static final String DB_URL_PROPERTY = "url";
     private static final String DB_USER_PROPERTY = "user";

@@ -1,5 +1,7 @@
+import migration.MigrationManager;
+
 public class Application {
     public static void run(){
-        MigrationTool.migrate();
+        MigrationManager.migrate();
     }
 }
