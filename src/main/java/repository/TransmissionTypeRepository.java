@@ -96,7 +96,19 @@ public class TransmissionTypeRepository {
     }
 
     public void delete(UUID id) {
-        /*UPDATE transmission_type SET status=FALSE WHERE id='?' AND status;*/
+        String INACTIVATE = "UPDATE transmission_type SET status=FALSE WHERE id=? AND status;";
+        try (PreparedStatement statement = connection.prepareStatement(INACTIVATE)) {
+            disableAutoCommit();
+            statement.setObject(1, id);
+            statement.execute();
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            rollbackTransaction();
+            throw new RuntimeException(exception);
+        }
+        finally {
+            enableAutoCommit();
+        }
     }
 
     private void disableAutoCommit() {

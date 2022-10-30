@@ -111,7 +111,19 @@ public class CarRepository {
     }
 
     public void delete(UUID id) {
-        /*UPDATE car SET status = FALSE WHERE id = '?' AND status;*/
+        String INACTIVATE = "UPDATE car SET status = FALSE WHERE id = ? AND status;";
+        try (PreparedStatement statement = connection.prepareStatement(INACTIVATE)) {
+            disableAutoCommit();
+            statement.setObject(1, id);
+            statement.execute();
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            rollbackTransaction();
+            throw new RuntimeException(exception);
+        }
+        finally {
+            enableAutoCommit();
+        }
     }
 
     public List<Car> getByCarType(CarType carType) {
