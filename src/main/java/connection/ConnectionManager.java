@@ -1,4 +1,7 @@
+package connection;
+
 import lombok.extern.slf4j.Slf4j;
+import properties.PropsLoader;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,7 +10,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 @Slf4j
-public class ConnectionSetup {
+public class ConnectionManager {
     private static final String PROPERTIES_PATH = "/jdbc.properties";
     private static final String DB_URL_PROPERTY = "url";
     private static Connection connection;
