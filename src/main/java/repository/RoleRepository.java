@@ -92,8 +92,26 @@ public class RoleRepository {
     }
 
     public void update(Role role) {
-        //UPDATE role SET name = '?' WHERE id = '?' AND status;
-        //UPDATE role SET description = '?' WHERE id = '?' AND status;
+        String UPDATE = "UPDATE role SET name = ?, description = ? WHERE id = ? AND status;";
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+            disableAutoCommit();
+
+            statement.setString(1, role.getName());
+            statement.setString(2, role.getDescription());
+            statement.setObject(3, role.getId());
+
+            if(statement.execute()) {
+                rollbackTransaction();
+            }
+
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            rollbackTransaction();
+            throw new RuntimeException(exception);
+        }
+        finally {
+            enableAutoCommit();
+        }
     }
 
     public void delete(UUID id) {

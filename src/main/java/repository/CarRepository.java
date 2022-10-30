@@ -99,14 +99,31 @@ public class CarRepository {
     }
 
     public void update(Car car) {
-        /*UPDATE car SET number = '?' WHERE id = '?' AND status;*/
-        /*UPDATE car SET brand = '?' WHERE id = '?' AND status;*/
-        /*UPDATE car SET model = '?' WHERE id = '?' AND status;*/
-        /*UPDATE car SET car_type_id = '?' WHERE id = '?' AND status;*/
-        /*UPDATE car SET car_comfort_id = '?' WHERE id = '?' AND status;*/
-        /*UPDATE car SET engine_id = '?' WHERE id = '?' AND status;*/
-        /*UPDATE car SET price = ? WHERE id = '?' AND status;*/
-        /*UPDATE car SET deposit = ? WHERE id = '?' AND status;*/
+        String UPDATE = "UPDATE car SET number = ?, brand = ?, model = ?, car_type_id = ?, car_comfort_id = ?, engine_id = ?, price = ?, deposit = ? WHERE id = ? AND status;";
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+            disableAutoCommit();
+
+            statement.setString(1, car.getNumber());
+            statement.setString(2, car.getBrand());
+            statement.setString(3, car.getModel());
+            statement.setObject(4, car.getCarTypeId());
+            statement.setObject(5, car.getComfortId());
+            statement.setObject(6, car.getEngineId());
+            statement.setDouble(7, car.getPrice());
+            statement.setDouble(8, car.getDeposit());
+
+            if(statement.execute()) {
+                rollbackTransaction();
+            }
+
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            rollbackTransaction();
+            throw new RuntimeException(exception);
+        }
+        finally {
+            enableAutoCommit();
+        }
     }
 
     public void delete(UUID id) {

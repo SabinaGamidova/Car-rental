@@ -100,9 +100,9 @@ public class CarComfortRepository {
             statement.setString(2, carComfort.getDescription());
             statement.setObject(3, carComfort.getId());
 
-                if(!statement.execute()) {
-                    rollbackTransaction();
-                }
+            if(statement.execute()) {
+                rollbackTransaction();
+            }
 
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);

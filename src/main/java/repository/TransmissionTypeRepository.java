@@ -92,7 +92,25 @@ public class TransmissionTypeRepository {
     }
 
     public void update(TransmissionType transmissionType) {
-        /*UPDATE transmission_type SET name='?' WHERE id='?' AND status;*/
+        String UPDATE = "UPDATE transmission_type SET name=? WHERE id=? AND status;";
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+            disableAutoCommit();
+
+            statement.setString(1, transmissionType.getName());
+            statement.setObject(2, transmissionType.getId());
+
+            if(statement.execute()) {
+                rollbackTransaction();
+            }
+
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            rollbackTransaction();
+            throw new RuntimeException(exception);
+        }
+        finally {
+            enableAutoCommit();
+        }
     }
 
     public void delete(UUID id) {

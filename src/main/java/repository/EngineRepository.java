@@ -95,11 +95,31 @@ public class EngineRepository {
     }
 
     public void update(Engine engine) {
-        //UPDATE engine SET max_speed = ? WHERE id = '?' AND status;
-        //UPDATE engine SET fuel_type_id = '?' WHERE id = '?' AND status;
-        //UPDATE engine SET transmission_type_id = '?' WHERE id = '?' AND status;
-        //UPDATE engine SET volume = ? WHERE id = '?' AND status;
-        //UPDATE engine SET fuel_consumption = ? WHERE id = '?' AND status;
+        String UPDATE = "UPDATE engine SET max_speed = ?, " +
+                "fuel_type_id = ?, transmission_type_id = ?, " +
+                "volume = ?, fuel_consumption = ? WHERE id = ? AND status;";
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+            disableAutoCommit();
+
+            statement.setInt(1, engine.getMaxSpeed());
+            statement.setObject(2, engine.getFuelTypeId());
+            statement.setObject(3, engine.getTransmissionTypeId());
+            statement.setDouble(4, engine.getVolume());
+            statement.setDouble(5, engine.getFuelConsumption());
+
+
+            if(statement.execute()) {
+                rollbackTransaction();
+            }
+
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            rollbackTransaction();
+            throw new RuntimeException(exception);
+        }
+        finally {
+            enableAutoCommit();
+        }
     }
 
     public void delete(UUID id) {

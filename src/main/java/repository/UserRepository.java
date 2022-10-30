@@ -101,13 +101,33 @@ public class UserRepository {
     }
 
     public void update(User user) {
-        /*UPDATE "user" SET name = '?' WHERE id = '?' AND status;*/
-        /*UPDATE "user" SET surname = '?' WHERE id = '?' AND status;*/
-        /*UPDATE "user" SET patronymic = '?' WHERE id = '?' AND status;*/
-        /*UPDATE "user" SET date_of_birth = '?' WHERE id = '?' AND status;*/
-        /*UPDATE "user" SET email = '?' WHERE id = '?' AND status;*/
-        /*UPDATE "user" SET password = '?' WHERE id = '?' AND status;*/
-        /*UPDATE "user" SET role_id = '?' WHERE id = '?' AND status;*/
+        String UPDATE = "UPDATE \"user\" SET name = ?, " +
+                "surname = ?, patronymic = ?, " +
+                "date_of_birth = ?, email = ?, " +
+                "password = ?, role_id = ? WHERE id = ? AND status;";
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+            disableAutoCommit();
+
+            statement.setString(1, user.getName());
+            statement.setString(2, user.getSurname());
+            statement.setString(3, user.getPatronymic());
+            statement.setTimestamp(4, getTimestamp(user.getDateOfBirth()));
+            statement.setString(5, user.getEmail());
+            statement.setString(6, user.getPassword());
+            statement.setObject(7, user.getRoleId());
+
+            if(statement.execute()) {
+                rollbackTransaction();
+            }
+
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            rollbackTransaction();
+            throw new RuntimeException(exception);
+        }
+        finally {
+            enableAutoCommit();
+        }
     }
 
     public void delete(UUID id) {

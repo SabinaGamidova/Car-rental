@@ -91,7 +91,25 @@ public class FuelTypeRepository {
     }
 
     public void update(FuelType fuelType) {
-        /*UPDATE fuel_type SET description = '?' WHERE id = '?' AND status;*/
+        String UPDATE = "UPDATE fuel_type SET description = ? WHERE id = ? AND status;";
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+            disableAutoCommit();
+
+            statement.setString(1, fuelType.getDescription());
+            statement.setObject(2, fuelType.getId());
+
+            if(statement.execute()) {
+                rollbackTransaction();
+            }
+
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            rollbackTransaction();
+            throw new RuntimeException(exception);
+        }
+        finally {
+            enableAutoCommit();
+        }
     }
 
     public void delete(UUID id) {
