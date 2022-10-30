@@ -27,7 +27,7 @@ public class CarComfortRepository {
             statement.setString(1, carComfort.getName());
             statement.setString(2, carComfort.getDescription());
 
-            if(!statement.execute()) {
+            if(statement.execute()) {
                 rollbackTransaction();
             }
 

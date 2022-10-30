@@ -3,11 +3,9 @@ package repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mapper.Mapper;
-import models.cars.TransmissionType;
 import models.people.User;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,16 +32,10 @@ public class UserRepository {
             statement.setString(5, user.getEmail());
             statement.setString(6, user.getPassword());
             statement.setObject(7, user.getRoleId());
-            statement.addBatch();
 
-            int[] result = statement.executeBatch();
-            for (int singleResult : result) {
-                if (singleResult != 1) {
-                    rollbackTransaction();
-                    break;
-                }
+            if (statement.execute()) {
+                rollbackTransaction();
             }
-            statement.clearBatch();
 
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);

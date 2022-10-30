@@ -27,16 +27,10 @@ public class TransmissionTypeRepository {
             disableAutoCommit();
 
             statement.setString(1, transmissionType.getName());
-            statement.addBatch();
 
-            int[] result = statement.executeBatch();
-            for(int singleResult : result) {
-                if(singleResult != 1) {
-                    rollbackTransaction();
-                    break;
-                }
+            if(statement.execute()) {
+                rollbackTransaction();
             }
-            statement.clearBatch();
 
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);

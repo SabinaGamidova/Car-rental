@@ -32,16 +32,9 @@ public class EngineRepository {
             statement.setDouble(4, engine.getVolume());
             statement.setDouble(5, engine.getFuelConsumption());
 
-            statement.addBatch();
-
-            int[] result = statement.executeBatch();
-            for(int singleResult : result) {
-                if(singleResult != 1) {
-                    rollbackTransaction();
-                    break;
-                }
+            if(statement.execute()) {
+                rollbackTransaction();
             }
-            statement.clearBatch();
 
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
