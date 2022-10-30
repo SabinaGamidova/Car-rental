@@ -50,7 +50,6 @@ public class CarRepository {
     }
 
     public List<Car> getAll() { //TODO check
-        /*SELECT * FROM car WHERE status*/
         String GET_ALL = "SELECT * FROM car WHERE status";
         try (Statement statement = connection.createStatement()) {
             disableAutoCommit();
@@ -127,8 +126,28 @@ public class CarRepository {
     }
 
     public List<Car> getByCarType(CarType carType) {
-        /*SELECT * FROM car WHERE car_type_id='?' AND status*/
-        return null;
+        String GET_BY_CAR_TYPE = "SELECT * FROM car WHERE car_type_id=? AND status";
+        try (PreparedStatement statement = connection.prepareStatement(GET_BY_CAR_TYPE)) {
+            disableAutoCommit();
+            statement.setObject(1, carType.getId());
+            ResultSet resultSet = statement.executeQuery();
+
+            List<Car> list = new ArrayList<>();
+            while (resultSet.next()) {
+                Car car = (Car) Mapper.mapSingleFromResultSet(resultSet, Car.class);
+                list.add(car);
+            }
+
+            resultSet.close();
+            return list;
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            rollbackTransaction();
+            throw new RuntimeException(exception);
+        }
+        finally {
+            enableAutoCommit();
+        }
     }
 
     public List<Car> getByCarComfort(CarComfort carComfort) {
