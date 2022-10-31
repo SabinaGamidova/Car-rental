@@ -23,12 +23,12 @@ public interface Transactionable {
         }
     }
 
-    default <T> T wrapIntoTransaction(Worker<T> worker) {
+    default  <T> T wrapIntoTransaction(Worker<T> worker) {
         Logger logger = LoggerFactory.getLogger(Transactionable.class);
         Connection connection = ConnectionManager.getConnection();
         try {
             disableAutoCommit(connection);
-            return worker.work();
+            return (T)worker.work();
         } catch (Exception exception) {
             logger.error("Transaction exception's occurred, it will be rolled back", exception);
             rollbackTransaction(connection);
