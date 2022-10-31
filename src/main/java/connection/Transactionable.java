@@ -28,7 +28,7 @@ public interface Transactionable {
         Connection connection = ConnectionManager.getConnection();
         try {
             disableAutoCommit(connection);
-            return (T)worker.work();
+            return worker.work();
         } catch (Exception exception) {
             logger.error("Transaction exception's occurred, it will be rolled back", exception);
             rollbackTransaction(connection);
