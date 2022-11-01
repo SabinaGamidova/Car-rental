@@ -11,8 +11,8 @@ import java.util.UUID;
 public class CarService implements CarInterface {
 
     @Override
-    public void insert(Car Car) {
-        return;
+    public Car insert(Car Car) {
+        return null;
     }
 
     @Override
@@ -26,12 +26,12 @@ public class CarService implements CarInterface {
     }
 
     @Override
-    public void update(Car car) {
-        return;
+    public Car update(Car car) {
+        return null;
     }
 
     @Override
-    public void delete(UUID id) {}
+    public void delete(UUID id) {return;}
 
     @Override
     public List<Car> getByCarType(CarType carType) {
