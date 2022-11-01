@@ -1,5 +1,6 @@
 package repository;
 
+import exception.CarRentalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mapper.Mapper;
@@ -20,11 +21,9 @@ import java.util.UUID;
 public class UserRepository {
     private final Connection connection;
 
-    public void insert(User user) {
+    public User insert(User user) {
         String INSERT = "INSERT INTO \"user\"(name, surname, patronymic, date_of_birth, email, password, role_id)VALUES(?, ?, ?, ?, ?, ?, ?);";
         try (PreparedStatement statement = connection.prepareStatement(INSERT)) {
-            disableAutoCommit();
-
             statement.setString(1, user.getName());
             statement.setString(2, user.getSurname());
             statement.setString(3, user.getPatronymic());
@@ -32,17 +31,11 @@ public class UserRepository {
             statement.setString(5, user.getEmail());
             statement.setString(6, user.getPassword());
             statement.setObject(7, user.getRoleId());
-
-            if (statement.execute()) {
-                rollbackTransaction();
-            }
-
+            statement.execute();
+            return user;
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
-            rollbackTransaction();
-            throw new RuntimeException(exception);
-        } finally {
-            enableAutoCommit();
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
@@ -52,62 +45,47 @@ public class UserRepository {
     }
 
 
-    public List<User> getAll() { //TODO check
+    public List<User> getAll() {
         String GET_ALL = "SELECT * FROM \"user\" WHERE status";
         try (Statement statement = connection.createStatement()) {
-            disableAutoCommit();
             ResultSet resultSet = statement.executeQuery(GET_ALL);
-
             List<User> list = new ArrayList<>();
             while (resultSet.next()) {
                 User user = (User) Mapper.mapSingleFromResultSet(resultSet, User.class);
                 list.add(user);
             }
-
             resultSet.close();
             return list;
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
-            rollbackTransaction();
-            throw new RuntimeException(exception);
-        } finally {
-            enableAutoCommit();
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
     public User getById(UUID id) {
-        //SELECT * FROM "user" WHERE id='' AND status
         String GET_BY_ID = "SELECT * FROM \"user\" WHERE id=? AND status";
         try (PreparedStatement statement = connection.prepareStatement(GET_BY_ID)) {
-            disableAutoCommit();
             statement.setObject(1, id);
             ResultSet resultSet = statement.executeQuery();
-
             if (resultSet.next()) {
                 User user = (User) Mapper.mapSingleFromResultSet(resultSet, User.class);
                 resultSet.close();
                 return user;
             }
-
             resultSet.close();
-            throw new RuntimeException(String.format("User with id %s not found", id));
+            throw new CarRentalException(String.format("User with id %s not found", id));
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
-            rollbackTransaction();
-            throw new RuntimeException(exception);
-        } finally {
-            enableAutoCommit();
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
-    public void update(User user) {
+    public User update(User user) {
         String UPDATE = "UPDATE \"user\" SET name = ?, " +
                 "surname = ?, patronymic = ?, " +
                 "date_of_birth = ?, email = ?, " +
                 "password = ?, role_id = ? WHERE id = ? AND status;";
         try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
-            disableAutoCommit();
-
             statement.setString(1, user.getName());
             statement.setString(2, user.getSurname());
             statement.setString(3, user.getPatronymic());
@@ -115,61 +93,22 @@ public class UserRepository {
             statement.setString(5, user.getEmail());
             statement.setString(6, user.getPassword());
             statement.setObject(7, user.getRoleId());
-
-            if(statement.execute()) {
-                rollbackTransaction();
-            }
-
+            statement.execute();
+            return user;
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
-            rollbackTransaction();
-            throw new RuntimeException(exception);
-        }
-        finally {
-            enableAutoCommit();
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
     public void delete(UUID id) {
         String INACTIVATE = "UPDATE \"user\" SET status=FALSE WHERE id=? AND status;";
         try (PreparedStatement statement = connection.prepareStatement(INACTIVATE)) {
-            disableAutoCommit();
             statement.setObject(1, id);
             statement.execute();
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
-            rollbackTransaction();
-            throw new RuntimeException(exception);
-        }
-        finally {
-            enableAutoCommit();
-        }
-    }
-
-    private void disableAutoCommit() {
-        try {
-            connection.setAutoCommit(Boolean.FALSE);
-        } catch (SQLException exception) {
-            log.error("Can not disable autocommit", exception);
-            throw new RuntimeException(exception);
-        }
-    }
-
-    private void enableAutoCommit() {
-        try {
-            connection.setAutoCommit(Boolean.TRUE);
-        } catch (SQLException exception) {
-            log.error("Can not enable autocommit", exception);
-            throw new RuntimeException(exception);
-        }
-    }
-
-    private void rollbackTransaction() {
-        try {
-            connection.rollback();
-        } catch (SQLException exception) {
-            log.error("Can not rollback transaction", exception);
-            throw new RuntimeException(exception);
+            throw new CarRentalException(exception.getMessage());
         }
     }
 }

@@ -1,5 +1,6 @@
 package repository;
 
+import exception.CarRentalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mapper.Mapper;
@@ -22,11 +23,9 @@ public class CarRepository {
     private final Connection connection;
 
 
-    public void insert(Car car) {
+    public Car insert(Car car) {
         String INSERT = "INSERT INTO car(number, brand, model, car_type_id, car_comfort_id, engine_id, price, deposit)VALUES(?, ?, ?, ?, ?, ?, ?, ?);";
         try (PreparedStatement statement = connection.prepareStatement(INSERT)) {
-            disableAutoCommit();
-
             statement.setString(1, car.getNumber());
             statement.setString(2, car.getBrand());
             statement.setString(3, car.getModel());
@@ -35,24 +34,17 @@ public class CarRepository {
             statement.setObject(6, car.getEngineId());
             statement.setDouble(7, car.getPrice());
             statement.setDouble(8, car.getDeposit());
-
-            if(statement.execute()) {
-                rollbackTransaction();
-            }
-
+            statement.execute();
+            return car;
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
-            rollbackTransaction();
-            throw new RuntimeException(exception);
-        } finally {
-            enableAutoCommit();
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
-    public List<Car> getAll() { //TODO check
+    public List<Car> getAll() {
         String GET_ALL = "SELECT * FROM car WHERE status";
         try (Statement statement = connection.createStatement()) {
-            disableAutoCommit();
             ResultSet resultSet = statement.executeQuery(GET_ALL);
 
             List<Car> list = new ArrayList<>();
@@ -65,18 +57,13 @@ public class CarRepository {
             return list;
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
-            rollbackTransaction();
-            throw new RuntimeException(exception);
-        }
-        finally {
-            enableAutoCommit();
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
     public Car getById(UUID id) {
         String GET_BY_ID = "SELECT * FROM car WHERE id=? AND status";
         try (PreparedStatement statement = connection.prepareStatement(GET_BY_ID)) {
-            disableAutoCommit();
             statement.setObject(1, id);
             ResultSet resultSet = statement.executeQuery();
 
@@ -87,22 +74,16 @@ public class CarRepository {
             }
 
             resultSet.close();
-            throw new RuntimeException(String.format("Car with id %s not found", id));
+            throw new CarRentalException(String.format("Car with id %s not found", id));
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
-            rollbackTransaction();
-            throw new RuntimeException(exception);
-        }
-        finally {
-            enableAutoCommit();
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
     public void update(Car car) {
         String UPDATE = "UPDATE car SET number = ?, brand = ?, model = ?, car_type_id = ?, car_comfort_id = ?, engine_id = ?, price = ?, deposit = ? WHERE id = ? AND status;";
         try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
-            disableAutoCommit();
-
             statement.setString(1, car.getNumber());
             statement.setString(2, car.getBrand());
             statement.setString(3, car.getModel());
@@ -111,41 +92,27 @@ public class CarRepository {
             statement.setObject(6, car.getEngineId());
             statement.setDouble(7, car.getPrice());
             statement.setDouble(8, car.getDeposit());
-
-            if(statement.execute()) {
-                rollbackTransaction();
-            }
-
+            statement.execute();
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
-            rollbackTransaction();
-            throw new RuntimeException(exception);
-        }
-        finally {
-            enableAutoCommit();
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
     public void delete(UUID id) {
         String INACTIVATE = "UPDATE car SET status = FALSE WHERE id = ? AND status;";
         try (PreparedStatement statement = connection.prepareStatement(INACTIVATE)) {
-            disableAutoCommit();
             statement.setObject(1, id);
             statement.execute();
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
-            rollbackTransaction();
-            throw new RuntimeException(exception);
-        }
-        finally {
-            enableAutoCommit();
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
     public List<Car> getByCarType(CarType carType) {
         String GET_BY_CAR_TYPE = "SELECT * FROM car WHERE car_type_id=? AND status";
         try (PreparedStatement statement = connection.prepareStatement(GET_BY_CAR_TYPE)) {
-            disableAutoCommit();
             statement.setObject(1, carType.getId());
             ResultSet resultSet = statement.executeQuery();
 
@@ -159,18 +126,13 @@ public class CarRepository {
             return list;
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
-            rollbackTransaction();
-            throw new RuntimeException(exception);
-        }
-        finally {
-            enableAutoCommit();
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
     public List<Car> getByCarComfort(CarComfort carComfort) {
         String GET_BY_CAR_COMFORT = "SELECT * FROM car WHERE car_comfort_id=? AND status";
         try (PreparedStatement statement = connection.prepareStatement(GET_BY_CAR_COMFORT)) {
-            disableAutoCommit();
             statement.setObject(1, carComfort.getId());
             ResultSet resultSet = statement.executeQuery();
 
@@ -184,38 +146,7 @@ public class CarRepository {
             return list;
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
-            rollbackTransaction();
-            throw new RuntimeException(exception);
-        }
-        finally {
-            enableAutoCommit();
-        }
-    }
-
-    private void disableAutoCommit() {
-        try {
-            connection.setAutoCommit(Boolean.FALSE);
-        } catch (SQLException exception) {
-            log.error("Can not disable autocommit", exception);
-            throw new RuntimeException(exception);
-        }
-    }
-
-    private void enableAutoCommit() {
-        try {
-            connection.setAutoCommit(Boolean.TRUE);
-        } catch (SQLException exception) {
-            log.error("Can not enable autocommit", exception);
-            throw new RuntimeException(exception);
-        }
-    }
-
-    private void rollbackTransaction() {
-        try {
-            connection.rollback();
-        } catch (SQLException exception) {
-            log.error("Can not rollback transaction", exception);
-            throw new RuntimeException(exception);
+            throw new CarRentalException(exception.getMessage());
         }
     }
 }

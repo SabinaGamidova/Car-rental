@@ -1,5 +1,6 @@
 package connection;
 
+import exception.CarRentalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,7 @@ public interface Transactionable {
         } catch (Exception exception) {
             logger.error("Transaction exception's occurred, it will be rolled back", exception);
             rollbackTransaction(connection);
-            throw new RuntimeException(exception);
+            throw new CarRentalException(exception.getMessage());
         } finally {
             enableAutoCommit(connection);
         }
@@ -32,7 +33,7 @@ public interface Transactionable {
         } catch (Exception exception) {
             logger.error("Transaction exception's occurred, it will be rolled back", exception);
             rollbackTransaction(connection);
-            throw new RuntimeException(exception);
+            throw new CarRentalException(exception.getMessage());
         } finally {
             enableAutoCommit(connection);
         }
@@ -42,7 +43,7 @@ public interface Transactionable {
         try {
             connection.setAutoCommit(Boolean.FALSE);
         } catch (SQLException exception) {
-            throw new RuntimeException(exception);
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
@@ -50,7 +51,7 @@ public interface Transactionable {
         try {
             connection.setAutoCommit(Boolean.TRUE);
         } catch (SQLException exception) {
-            throw new RuntimeException(exception);
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
@@ -58,7 +59,7 @@ public interface Transactionable {
         try {
             connection.rollback();
         } catch (SQLException exception) {
-            throw new RuntimeException(exception);
+            throw new CarRentalException(exception.getMessage());
         }
     }
 }

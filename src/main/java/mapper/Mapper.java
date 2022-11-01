@@ -1,5 +1,6 @@
 package mapper;
 
+import exception.CarRentalException;
 import lombok.NoArgsConstructor;
 import models.Mappable;
 
@@ -33,7 +34,7 @@ public class Mapper {
         try {
             return resultSet.getObject(m.columnNumber(), m.dataType());
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new CarRentalException(e.getMessage());
         }
     }
 
@@ -43,7 +44,7 @@ public class Mapper {
             Class<?>[] fieldsTypes = getClassFieldsTypes(cls);
             return cls.getConstructor(fieldsTypes);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new CarRentalException(e.getMessage());
         }
     }
 
@@ -61,7 +62,7 @@ public class Mapper {
             return constructor.newInstance(objects);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             System.out.println("Exception in createInstance method.");
-            throw new RuntimeException(e);
+            throw new CarRentalException(e.getMessage());
         }
     }
 }

@@ -1,5 +1,6 @@
 package connection;
 
+import exception.CarRentalException;
 import lombok.extern.slf4j.Slf4j;
 import properties.PropsLoader;
 
@@ -27,7 +28,7 @@ public class ConnectionManager {
             return Objects.isNull(connection) || connection.isClosed();
         } catch (SQLException exception) {
             log.error("Problem with connection", exception);
-            throw new RuntimeException(exception);
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
@@ -41,13 +42,13 @@ public class ConnectionManager {
             return connection;
         } catch (SQLException exception) {
             log.error("Can not get connection", exception);
-            throw new RuntimeException(exception);
+            throw new CarRentalException(exception.getMessage());
         }
     }
 
     public static void closeConnection(Connection connection) {
         if(Objects.isNull(connection)) {
-            throw new RuntimeException("Can not close connection. Connection is null");
+            throw new CarRentalException("Can not close connection. Connection is null");
         }
         try {
             log.info("Trying to close connection");
@@ -55,7 +56,7 @@ public class ConnectionManager {
             log.info("Connection has been successfully closed");
         } catch (SQLException exception) {
             log.error("Can not close connection", exception);
-            throw new RuntimeException(exception);
+            throw new CarRentalException(exception.getMessage());
         }
     }
 }
