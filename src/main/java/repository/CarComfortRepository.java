@@ -76,7 +76,7 @@ public class CarComfortRepository {
     }
 
 
-    public CarComfort update(CarComfort carComfort) { //?
+    public CarComfort update(CarComfort carComfort) {
         String UPDATE = "UPDATE car_comfort SET name = ?, description = ? WHERE id = ? AND status";
         try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
 

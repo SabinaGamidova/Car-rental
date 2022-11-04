@@ -10,18 +10,14 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+
 
 public class CarComfortServiceTest {
     private CarComfortRepository carComfortRepositoryMock;
@@ -40,16 +36,10 @@ public class CarComfortServiceTest {
     @Test
     public void whenInsertCorrectCarComfort_thenVerifyCarComfort() {
         CarComfort carComfort = buildCarComfort(UUID.randomUUID());
-
         when(carComfortRepositoryMock.insert(carComfort)).thenReturn(carComfort);
-
         CarComfort response = carComfortService.insert(carComfort);
         assertNotNull(response);
-
-        assertEquals(carComfort.getId(), response.getId());
-        assertEquals(carComfort.getName(), response.getName());
-        assertEquals(carComfort.getDescription(), response.getDescription());
-
+        assertEquals(carComfort, response);
         verify(carComfortRepositoryMock).insert(carComfort);
         verifyNoMoreInteractions(carComfortRepositoryMock);
     }
@@ -84,10 +74,7 @@ public class CarComfortServiceTest {
 
     @Test
     public void whenGetAll_thenVerifyListOfCarComforts() {
-        List<CarComfort> carComforts = List.of(
-                buildCarComfort(UUID.randomUUID()),
-                buildCarComfort(UUID.randomUUID()),
-                buildCarComfort(UUID.randomUUID()));
+        List<CarComfort> carComforts = buildCarComfortList();
 
         when(carComfortRepositoryMock.getAll()).thenReturn(carComforts);
 
@@ -105,15 +92,10 @@ public class CarComfortServiceTest {
     public void whenGetByCorrectId_thenVerifyCarComfort() {
         UUID id = UUID.randomUUID();
         CarComfort carComfort = buildCarComfort(UUID.randomUUID());
-
         when(carComfortRepositoryMock.getById(id)).thenReturn(carComfort);
-
         CarComfort response = carComfortService.getById(id);
         assertNotNull(response);
-        assertEquals(carComfort.getId(), response.getId());
-        assertEquals(carComfort.getName(), response.getName());
-        assertEquals(carComfort.getDescription(), response.getDescription());
-
+        assertEquals(carComfort, response);
         verify(carComfortRepositoryMock).getById(id);
         verifyNoMoreInteractions(carComfortRepositoryMock);
     }
@@ -192,9 +174,9 @@ public class CarComfortServiceTest {
     }
 
 
-    @Test //???
+    @Test
     public void whenDeleteWithInvalidId_thenVerifyException() {
-        String exceptionMessage = "Can't remove the сar comfort, its id must be NOT null";
+        String exceptionMessage = "Can't remove the car comfort, its id must be NOT null";
 
         CarRentalException exception = assertThrows(
                 CarRentalException.class, () -> carComfortService.delete(null));
@@ -202,25 +184,19 @@ public class CarComfortServiceTest {
         assertEquals(exceptionMessage, exception.getMessage());
 
         verifyNoInteractions(carComfortRepositoryMock);
-        /*doThrow(new CarRentalException("Can't remove the сar comfort, its id must be NOT null"))
-                .when(carComfortRepositoryMock)
-                .delete(null);
-        assertThrows(CarRentalException.class, ()->carComfortRepositoryMock.delete(null));*/
     }
 
-    @Test //???
+    @Test
     public void whenDeleteCorrectCarComfort_thenVerifyCarComfort() {
         CarComfort carComfort = buildCarComfort(UUID.randomUUID());
-        doNothing().when(carComfortRepositoryMock).delete(isA(UUID.class));
         carComfortRepositoryMock.delete(carComfort.getId());
         assertNotNull(carComfort);
         verify(carComfortRepositoryMock).delete(carComfort.getId());
         verifyNoMoreInteractions(carComfortRepositoryMock);
-        verify(carComfortRepositoryMock, times(1)).delete(carComfort.getId());
     }
 
 
-    @Test //???
+    @Test
     public void whenDeleteWithAbsentId_thenVerifyException() {
         UUID id = UUID.randomUUID();
         String exceptionMessage = "Car comfort by such an id must be NOT null";
@@ -239,5 +215,13 @@ public class CarComfortServiceTest {
         carComfort.setDescription("TestCarComfortDescription");
         carComfort.setStatus(Boolean.TRUE);
         return carComfort;
+    }
+
+
+    private List<CarComfort> buildCarComfortList() {
+        return List.of(
+                buildCarComfort(UUID.randomUUID()),
+                buildCarComfort(UUID.randomUUID()),
+                buildCarComfort(UUID.randomUUID()));
     }
 }
