@@ -31,8 +31,8 @@ public class OrderService implements OrderInterface {
     }
 
     @Override
-    public void delete(UUID id) {
-
+    public boolean delete(UUID id) {
+        return true;
     }
 
     @Override

@@ -9,9 +9,8 @@ import java.util.UUID;
 public class UserService implements CrudGenericInterface<User> {
 
     @Override
-    public User insert(User user) {
+    public User insert(User user){
         return null;
-
     }
 
     @Override
@@ -25,11 +24,8 @@ public class UserService implements CrudGenericInterface<User> {
     }
 
     @Override
-    public User update(User user) {
-        return null;
-    }
+    public User update(User user){return null;}
 
     @Override
-    public void delete(UUID id) {
-    }
+    public boolean delete(UUID id){return true;}
 }

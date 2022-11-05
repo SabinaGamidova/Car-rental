@@ -29,6 +29,7 @@ public class CarTypeService implements CrudGenericInterface<CarType> {
     }
 
     @Override
-    public void delete(UUID id) {
+    public boolean delete(UUID id) {
+        return true;
     }
 }
