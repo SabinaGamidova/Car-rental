@@ -27,5 +27,5 @@ public class UserService implements CrudGenericInterface<User> {
     public User update(User user){return null;}
 
     @Override
-    public void delete(UUID id){return;}
+    public boolean delete(UUID id){return true;}
 }

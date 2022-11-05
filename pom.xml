@@ -19,7 +19,6 @@
         <junit-jupiter.version>5.9.1</junit-jupiter.version>
         <formatter-maven-plugin.version>2.18.0</formatter-maven-plugin.version>
         <mockito-core.version>4.8.1</mockito-core.version>
-        <mockito-inline.version>4.8.1</mockito-inline.version>
         <mockito-junit-jupiter.version>4.8.1</mockito-junit-jupiter.version>
     </properties>
 
@@ -69,14 +68,6 @@
             <version>${mockito-core.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
-            <version>${mockito-inline.version}</version>
-            <scope>test</scope>
-        </dependency>
-
 
         <dependency>
             <groupId>org.mockito</groupId>

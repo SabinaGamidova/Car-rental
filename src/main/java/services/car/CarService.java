@@ -31,7 +31,7 @@ public class CarService implements CarInterface {
     }
 
     @Override
-    public void delete(UUID id) {return;}
+    public boolean delete(UUID id) {return true;}
 
     @Override
     public List<Car> getByCarType(CarType carType) {
