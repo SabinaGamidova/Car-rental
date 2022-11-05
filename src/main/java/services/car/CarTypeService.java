@@ -1,9 +1,5 @@
 package services.car;
 
-import connection.Transactionable;
-import exception.CarRentalException;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import models.cars.CarType;
 import org.apache.commons.lang3.StringUtils;
 import repository.CarTypeRepository;

@@ -12,5 +12,5 @@ public interface CrudGenericInterface<T> {
 
     T update(T t);
 
-    void delete(UUID id);
+    boolean delete(UUID id);
 }
