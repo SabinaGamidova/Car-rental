@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import models.Mappable;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.UUID;
 
 @Data

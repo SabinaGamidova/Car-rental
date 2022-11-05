@@ -14,12 +14,12 @@ public class UserService implements CrudGenericInterface<User> {
     }
 
     @Override
-    public User getById(UUID id){
+    public User getById(UUID id) {
         return null;
     }
 
     @Override
-    public List<User> getAll(){
+    public List<User> getAll() {
         return null;
     }
 
