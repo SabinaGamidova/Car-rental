@@ -11,7 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -27,7 +26,7 @@ public class UserRepository {
             statement.setString(1, user.getName());
             statement.setString(2, user.getSurname());
             statement.setString(3, user.getPatronymic());
-            statement.setTimestamp(4, getTimestamp(user.getDateOfBirth()));
+            statement.setDate(4, user.getDateOfBirth());
             statement.setString(5, user.getEmail());
             statement.setString(6, user.getPassword());
             statement.setObject(7, user.getRoleId());
@@ -37,11 +36,6 @@ public class UserRepository {
             log.error("Can not process statement", exception);
             throw new CarRentalException(exception.getMessage());
         }
-    }
-
-
-    private Timestamp getTimestamp(java.util.Date date) {
-        return date == null ? null : new java.sql.Timestamp(date.getTime());
     }
 
 
@@ -89,7 +83,7 @@ public class UserRepository {
             statement.setString(1, user.getName());
             statement.setString(2, user.getSurname());
             statement.setString(3, user.getPatronymic());
-            statement.setTimestamp(4, getTimestamp(user.getDateOfBirth()));
+            statement.setDate(4, user.getDateOfBirth());
             statement.setString(5, user.getEmail());
             statement.setString(6, user.getPassword());
             statement.setObject(7, user.getRoleId());

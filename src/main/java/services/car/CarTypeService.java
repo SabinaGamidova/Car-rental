@@ -9,8 +9,8 @@ import java.util.UUID;
 public class CarTypeService implements CrudGenericInterface<CarType> {
 
     @Override
-    public void insert(CarType carType) {
-        return;
+    public CarType insert(CarType carType) {
+        return null;
     }
 
     @Override
@@ -24,8 +24,8 @@ public class CarTypeService implements CrudGenericInterface<CarType> {
     }
 
     @Override
-    public void update(CarType carType) {
-        return;
+    public CarType update(CarType carType) {
+        return null;
     }
 
     @Override

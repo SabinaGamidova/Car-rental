@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import models.cars.CarComfort;
 import repository.CarComfortRepository;
-import repository.TransactionManager;
 import services.CrudGenericInterface;
 
 import java.util.List;
@@ -12,16 +11,12 @@ import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
-public class CarComfortService implements CrudGenericInterface<CarComfort>, TransactionManager {
+public class CarComfortService implements CrudGenericInterface<CarComfort> {
     private CarComfortRepository carComfortRepository;
 
     @Override
-    public void insert(CarComfort carComfort) {
-        /*wrapIntoTransaction(() -> {
-            carComfortRepository.insert(null);
-            carComfortRepository.getAll();
-            carComfortRepository.delete(null);
-        });*/
+    public CarComfort insert(CarComfort carComfort) {
+        return null;
     }
 
     @Override
@@ -35,8 +30,8 @@ public class CarComfortService implements CrudGenericInterface<CarComfort>, Tran
     }
 
     @Override
-    public void update(CarComfort carComfort) {
-        return;
+    public CarComfort update(CarComfort carComfort) {
+        return null;
     }
 
     @Override

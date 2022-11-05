@@ -27,8 +27,8 @@ public class OrderRepository {
         try (PreparedStatement statement = connection.prepareStatement(INSERT)) {
             statement.setObject(1, order.getClientId());
             statement.setObject(2, order.getCarId());
-            statement.setTimestamp(3, getTimestamp(order.getFrom()));
-            statement.setTimestamp(4, getTimestamp(order.getTo()));
+            statement.setDate(3, order.getFrom());
+            statement.setDate(4, order.getTo());
             statement.setDouble(5, order.getTotalPrice());
             statement.execute();
             return order;

@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class OrderService implements OrderInterface{
+public class OrderService implements OrderInterface {
 
 
     @Override
-    public void insert(Order order) {
-
+    public Order insert(Order order) {
+        return null;
     }
 
     @Override
@@ -26,8 +26,8 @@ public class OrderService implements OrderInterface{
     }
 
     @Override
-    public void update(Order order) {
-
+    public Order update(Order order) {
+        return null;
     }
 
     @Override
