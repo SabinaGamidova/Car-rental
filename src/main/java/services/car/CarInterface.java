@@ -6,10 +6,11 @@ import models.cars.CarType;
 import services.CrudGenericInterface;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface CarInterface extends CrudGenericInterface<Car> {
 
-    List<Car> getByCarType(CarType carType);
+    List<Car> getByCarType(UUID carTypeId);
 
-    List<Car> getByCarComfort(CarComfort carComfort);
+    List<Car> getByCarComfort(UUID carComfortId);
 }
