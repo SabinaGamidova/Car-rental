@@ -98,8 +98,8 @@ public class CarService implements CarInterface, Transactionable {
         if (StringUtils.isBlank(car.getNumber()) ||
                 StringUtils.isBlank(car.getBrand()) ||
                 StringUtils.isBlank(car.getModel()) ||
-                (car.getDeposit() <= 0 || car.getDeposit() > CarMaxPrice.DEPOSIT.getValue()) ||
-                (car.getPrice() <= 0 || car.getPrice() > CarMaxPrice.PRICE.getValue())) {
+                (car.getDeposit() <= 0 || car.getDeposit() > CarMaxPrice.MAX_DEPOSIT.getValue()) ||
+                (car.getPrice() <= 0 || car.getPrice() > CarMaxPrice.MAX_PRICE.getValue())) {
             log.error("Car properties have invalid format {}", car);
             throw new CarRentalException("Car has invalid data");
         }
