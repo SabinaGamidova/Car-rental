@@ -81,7 +81,7 @@ public class CarRepository {
         }
     }
 
-    public void update(Car car) {
+    public Car update(Car car) {
         String UPDATE = "UPDATE car SET number = ?, brand = ?, model = ?, car_type_id = ?, car_comfort_id = ?, engine_id = ?, price = ?, deposit = ? WHERE id = ? AND status;";
         try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
             statement.setString(1, car.getNumber());
@@ -93,22 +93,13 @@ public class CarRepository {
             statement.setDouble(7, car.getPrice());
             statement.setDouble(8, car.getDeposit());
             statement.execute();
+            return car;
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
             throw new CarRentalException(exception.getMessage());
         }
     }
 
-    public void delete(UUID id) {
-        String INACTIVATE = "UPDATE car SET status = FALSE WHERE id = ? AND status;";
-        try (PreparedStatement statement = connection.prepareStatement(INACTIVATE)) {
-            statement.setObject(1, id);
-            statement.execute();
-        } catch (SQLException exception) {
-            log.error("Can not process statement", exception);
-            throw new CarRentalException(exception.getMessage());
-        }
-    }
 
     public List<Car> getByCarType(CarType carType) {
         String GET_BY_CAR_TYPE = "SELECT * FROM car WHERE car_type_id=? AND status";
@@ -144,6 +135,26 @@ public class CarRepository {
 
             resultSet.close();
             return list;
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            throw new CarRentalException(exception.getMessage());
+        }
+    }
+
+
+    public boolean isExistById(UUID id) {
+        String IS_EXIST = "SELECT EXISTS (SELECT 1 FROM car WHERE id=?);";
+        try (PreparedStatement statement = connection.prepareStatement(IS_EXIST)) {
+            statement.setObject(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            boolean isExist = Boolean.FALSE;
+            if (resultSet.next()) {
+                isExist = resultSet.getBoolean(1);
+            }
+
+            resultSet.close();
+            return isExist;
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
             throw new CarRentalException(exception.getMessage());
