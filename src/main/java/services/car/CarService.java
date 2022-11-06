@@ -15,7 +15,7 @@ import java.util.UUID;
 @Slf4j
 @AllArgsConstructor
 public class CarService implements CarInterface, Transactionable {
-    private CarRepository carRepository;
+    private final CarRepository carRepository;
 
     @Override
     public Car insert(Car car) {
@@ -98,8 +98,8 @@ public class CarService implements CarInterface, Transactionable {
         if (StringUtils.isBlank(car.getNumber()) ||
                 StringUtils.isBlank(car.getBrand()) ||
                 StringUtils.isBlank(car.getModel()) ||
-                (car.getDeposit() <= 0 || car.getDeposit() > Integer.MAX_VALUE) ||
-                (car.getPrice() <= 0 || car.getPrice() > Integer.MAX_VALUE)) {
+                (car.getDeposit() <= 0 || car.getDeposit() > CarMaxPrice.DEPOSIT.getValue()) ||
+                (car.getPrice() <= 0 || car.getPrice() > CarMaxPrice.PRICE.getValue())) {
             log.error("Car properties have invalid format {}", car);
             throw new CarRentalException("Car has invalid data");
         }
