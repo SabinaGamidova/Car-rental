@@ -5,8 +5,6 @@ import exception.CarRentalException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import models.cars.Car;
-import models.cars.CarComfort;
-import models.cars.CarType;
 import org.apache.commons.lang3.StringUtils;
 import repository.CarRepository;
 
@@ -72,17 +70,23 @@ public class CarService implements CarInterface, Transactionable {
     }
 
     @Override
-    public List<Car> getByCarType(CarType carType) {
+    public List<Car> getByCarType(UUID carTypeId) {
         log.info("Trying to get all cars by the same car type");
-        validateCarType(carType);
-        return carRepository.getByCarType(carType);
+        if (Objects.isNull(carTypeId)) {
+            log.error("Can not find car type. Car type id must be not null");
+            throw new CarRentalException("Car type id must be NOT null");
+        }
+        return carRepository.getByCarType(carTypeId);
     }
 
     @Override
-    public List<Car> getByCarComfort(CarComfort carComfort) {
+    public List<Car> getByCarComfort(UUID carComfortId) {
         log.info("Trying to get all cars by the same car comfort");
-        validateCarComfort(carComfort);
-        return carRepository.getByCarComfort(carComfort);
+        if (Objects.isNull(carComfortId)) {
+            log.error("Can not find car comfort. Car comfort id must be not null");
+            throw new CarRentalException("Car comfort id must be NOT null");
+        }
+        return carRepository.getByCarComfort(carComfortId);
     }
 
 
@@ -98,30 +102,6 @@ public class CarService implements CarInterface, Transactionable {
                 (car.getPrice() <= 0 || car.getPrice() > Integer.MAX_VALUE)) {
             log.error("Car properties have invalid format {}", car);
             throw new CarRentalException("Car has invalid data");
-        }
-    }
-
-
-    private void validateCarComfort(CarComfort carComfort) {
-        if (Objects.isNull(carComfort)) {
-            log.error("Car comfort is null");
-            throw new CarRentalException("Car comfort must be NOT null");
-        }
-        if (StringUtils.isBlank(carComfort.getName()) || StringUtils.isBlank(carComfort.getDescription())) {
-            log.error("Car comfort properties have invalid format {}", carComfort);
-            throw new CarRentalException("Car comfort has invalid data");
-        }
-    }
-
-
-    private void validateCarType(CarType carType) {
-        if (Objects.isNull(carType)) {
-            log.error("Car type is null {}", carType);
-            throw new CarRentalException("Car type must be NOT null");
-        }
-        if (StringUtils.isBlank(carType.getName())) {
-            log.error("Car type properties have invalid format {}", carType);
-            throw new CarRentalException("Car type has invalid data");
         }
     }
 }

@@ -101,10 +101,10 @@ public class CarRepository {
     }
 
 
-    public List<Car> getByCarType(CarType carType) {
+    public List<Car> getByCarType(UUID carTypeId) {
         String GET_BY_CAR_TYPE = "SELECT * FROM car WHERE car_type_id=? AND status";
         try (PreparedStatement statement = connection.prepareStatement(GET_BY_CAR_TYPE)) {
-            statement.setObject(1, carType.getId());
+            statement.setObject(1, carTypeId);
             ResultSet resultSet = statement.executeQuery();
 
             List<Car> list = new ArrayList<>();
@@ -121,10 +121,10 @@ public class CarRepository {
         }
     }
 
-    public List<Car> getByCarComfort(CarComfort carComfort) {
+    public List<Car> getByCarComfort(UUID carComfortId) {
         String GET_BY_CAR_COMFORT = "SELECT * FROM car WHERE car_comfort_id=? AND status";
         try (PreparedStatement statement = connection.prepareStatement(GET_BY_CAR_COMFORT)) {
-            statement.setObject(1, carComfort.getId());
+            statement.setObject(1, carComfortId);
             ResultSet resultSet = statement.executeQuery();
 
             List<Car> list = new ArrayList<>();

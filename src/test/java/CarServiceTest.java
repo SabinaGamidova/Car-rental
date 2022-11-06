@@ -284,26 +284,26 @@ public class CarServiceTest {
 
 
     @Test
-    public void whenGetAllByCarType_thenVerifyListOfCars() {
-        CarType carType = buildCarType(UUID.randomUUID());
+    public void whenGetAllByCarTypeId_thenVerifyListOfCars() {
+        UUID id = UUID.randomUUID();
         List<Car> cars = buildCarList();
 
-        when(carRepositoryMock.getByCarType(carType)).thenReturn(cars);
+        when(carRepositoryMock.getByCarType(id)).thenReturn(cars);
 
-        List<Car> response = carService.getByCarType(carType);
+        List<Car> response = carService.getByCarType(id);
 
         assertNotNull(response);
         assertEquals(cars.size(), response.size());
         assertArrayEquals(cars.toArray(), response.toArray());
 
-        verify(carRepositoryMock).getByCarType(carType);
+        verify(carRepositoryMock).getByCarType(id);
         verifyNoMoreInteractions(carRepositoryMock);
     }
 
 
     @Test
-    public void whenGetAllWithNullCarType_thenVerifyException() {
-        String exceptionMessage = "Car type must be NOT null";
+    public void whenGetAllWithNullCarTypeId_thenVerifyException() {
+        String exceptionMessage = "Car type id must be NOT null";
 
         CarRentalException exception = assertThrows(
                 CarRentalException.class, () -> carService.getByCarType(null));
@@ -315,59 +315,28 @@ public class CarServiceTest {
     }
 
 
-    @Test
-    public void whenGetAllWithInvalidDataCarType_thenVerifyException() {
-        CarType carType = new CarType();
-        String exceptionMessage = "Car type has invalid data";
-
-        CarRentalException exception = assertThrows(
-                CarRentalException.class, () -> carService.getByCarType(carType));
-
-        assertNotNull(exception);
-        assertEquals(exceptionMessage, exception.getMessage());
-
-        verifyNoInteractions(carRepositoryMock);
-    }
-
 
     @Test
-    public void whenGetAllWithAbsentCarType_thenVerifyException() {
-        CarType carType = buildCarType(UUID.randomUUID());
-        String exceptionMessage = String.format("Cars with car type %s not found", carType);
-
-        when(carRepositoryMock.getByCarType(carType)).thenThrow(new CarRentalException(exceptionMessage));
-        CarRentalException exception = assertThrows(
-                CarRentalException.class, () -> carService.getByCarType(carType));
-
-        assertNotNull(exception);
-        assertEquals(exceptionMessage, exception.getMessage());
-
-        verify(carRepositoryMock).getByCarType(carType);
-        verifyNoMoreInteractions(carRepositoryMock);
-    }
-
-
-    @Test
-    public void whenGetAllByCarComfort_thenVerifyListOfCars() {
-        CarComfort carComfort = buildCarComfort(UUID.randomUUID());
+    public void whenGetAllByCarComfortId_thenVerifyListOfCars() {
+        UUID id = UUID.randomUUID();
         List<Car> cars = buildCarList();
 
-        when(carRepositoryMock.getByCarComfort(carComfort)).thenReturn(cars);
+        when(carRepositoryMock.getByCarComfort(id)).thenReturn(cars);
 
-        List<Car> response = carService.getByCarComfort(carComfort);
+        List<Car> response = carService.getByCarComfort(id);
 
         assertNotNull(response);
         assertEquals(cars.size(), response.size());
         assertArrayEquals(cars.toArray(), response.toArray());
 
-        verify(carRepositoryMock).getByCarComfort(carComfort);
+        verify(carRepositoryMock).getByCarComfort(id);
         verifyNoMoreInteractions(carRepositoryMock);
     }
 
 
     @Test
-    public void whenGetAllWithNullCarComfort_thenVerifyException() {
-        String exceptionMessage = "Car comfort must be NOT null";
+    public void whenGetAllWithNullCarComfortId_thenVerifyException() {
+        String exceptionMessage = "Car comfort id must be NOT null";
 
         CarRentalException exception = assertThrows(
                 CarRentalException.class, () -> carService.getByCarComfort(null));
@@ -376,38 +345,6 @@ public class CarServiceTest {
         assertEquals(exceptionMessage, exception.getMessage());
 
         verifyNoInteractions(carRepositoryMock);
-    }
-
-
-    @Test
-    public void whenGetAllWithInvalidDataCarComfort_thenVerifyException() {
-        CarComfort carComfort = new CarComfort();
-        String exceptionMessage = "Car comfort has invalid data";
-
-        CarRentalException exception = assertThrows(
-                CarRentalException.class, () -> carService.getByCarComfort(carComfort));
-
-        assertNotNull(exception);
-        assertEquals(exceptionMessage, exception.getMessage());
-
-        verifyNoInteractions(carRepositoryMock);
-    }
-
-
-    @Test
-    public void whenGetAllWithAbsentCarComfort_thenVerifyException() {
-        CarComfort carComfort = buildCarComfort(UUID.randomUUID());
-        String exceptionMessage = String.format("Cars with car comfort %s not found", carComfort);
-
-        when(carRepositoryMock.getByCarComfort(carComfort)).thenThrow(new CarRentalException(exceptionMessage));
-        CarRentalException exception = assertThrows(
-                CarRentalException.class, () -> carService.getByCarComfort(carComfort));
-
-        assertNotNull(exception);
-        assertEquals(exceptionMessage, exception.getMessage());
-
-        verify(carRepositoryMock).getByCarComfort(carComfort);
-        verifyNoMoreInteractions(carRepositoryMock);
     }
 
 
