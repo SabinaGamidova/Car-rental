@@ -16,7 +16,7 @@ import java.util.UUID;
 @Slf4j
 @AllArgsConstructor
 public class UserService implements CrudGenericInterface<User>, Transactionable {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public User insert(User user) {

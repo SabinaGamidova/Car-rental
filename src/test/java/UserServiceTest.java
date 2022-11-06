@@ -116,7 +116,7 @@ public class UserServiceTest {
 
     @Test
     public void whenGetByInvalidId_thenVerifyException() {
-        String exceptionMessage = "Car comfort id must be NOT null";
+        String exceptionMessage = "User id must be NOT null";
 
         CarRentalException exception = assertThrows(
                 CarRentalException.class, () -> userService.getById(null));
