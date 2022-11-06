@@ -16,7 +16,7 @@ import java.util.UUID;
 @Slf4j
 @AllArgsConstructor
 public class CarTypeService implements CrudGenericInterface<CarType>, Transactionable {
-    CarTypeRepository carTypeRepository;
+    private final CarTypeRepository carTypeRepository;
 
     @Override
     public CarType insert(CarType carType) {
