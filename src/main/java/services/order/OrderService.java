@@ -8,6 +8,7 @@ import models.cars.Car;
 import models.order.Order;
 import repository.CarRepository;
 import repository.OrderRepository;
+import util.DateTimeUtil;
 
 import java.time.Duration;
 import java.util.Date;
@@ -85,7 +86,12 @@ public class OrderService implements OrderInterface, Transactionable {
                 .between(from.toInstant(), to.toInstant())
                 .toDays();
         Car car = carRepository.getById(carId);
-        return daysAmount * car.getPrice() + car.getDeposit();
+        double totalPrice = daysAmount * car.getPrice() + car.getDeposit();
+        if (totalPrice <= 0 || totalPrice > OrderMaxPrice.MAX_PRICE.getValue()) {
+            log.error("Order properties have invalid format {}", totalPrice);
+            throw new CarRentalException("Your order has invalid data");
+        }
+        return totalPrice;
     }
 
 
@@ -98,7 +104,7 @@ public class OrderService implements OrderInterface, Transactionable {
         return wrapIntoTransaction(() -> {
             Order order = orderRepository.getById(id);
             order.setStatus(Boolean.FALSE);
-            orderRepository.update(order);
+            order = orderRepository.update(order);
             return order.isStatus() != Boolean.TRUE;
         });
     }
@@ -116,10 +122,9 @@ public class OrderService implements OrderInterface, Transactionable {
     @Override
     public List<Order> getBetweenDates(Date from, Date to) {
         log.info("Trying to get all orders between two dates");
-        if (Objects.isNull(from) || Objects.isNull(to)) {
-            log.error("Can not find orders. Dates must be not null");
-            throw new CarRentalException("Dates must be NOT null");
-        }
+        DateTimeUtil.validateWithToday(from);
+        DateTimeUtil.validateWithToday(to);
+        DateTimeUtil.validateDates(from, to);
         return orderRepository.getOrdersBetweenDates(from, to);
     }
 
@@ -130,10 +135,9 @@ public class OrderService implements OrderInterface, Transactionable {
             log.error("Can not find orders. User id must be not null");
             throw new CarRentalException("User id must be NOT null");
         }
-        if (Objects.isNull(from) || Objects.isNull(to)) {
-            log.error("Can not find user orders. Dates must be not null");
-            throw new CarRentalException("Dates must be NOT null");
-        }
+        DateTimeUtil.validateWithToday(from);
+        DateTimeUtil.validateWithToday(to);
+        DateTimeUtil.validateDates(from, to);
         return orderRepository.getUserOrdersBetweenDates(userId, from, to);
     }
 
@@ -143,10 +147,8 @@ public class OrderService implements OrderInterface, Transactionable {
             log.error("Order is null {}", order);
             throw new CarRentalException("Order must be NOT null");
         }
-        //if(order.getFrom().getDay() < new Date().getDay() || ) TODO check by days
-        if (order.getTotalPrice() <= 0 || order.getTotalPrice() > OrderMaxPrice.MAX_PRICE.getValue()) {
-            log.error("Order properties have invalid format {}", order);
-            throw new CarRentalException("Your order has invalid data");
-        }
+        DateTimeUtil.validateWithToday(order.getFrom());
+        DateTimeUtil.validateWithToday(order.getTo());
+        DateTimeUtil.validateDates(order.getFrom(), order.getTo());
     }
 }

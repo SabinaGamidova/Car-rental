@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mapper.Mapper;
 import models.order.Order;
+import util.DateTimeUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,8 +28,8 @@ public class OrderRepository {
 
             statement.setObject(1, order.getClientId());
             statement.setObject(2, order.getCarId());
-            statement.setDate(3, new java.sql.Date(order.getFrom().getTime()));
-            statement.setDate(4, new java.sql.Date(order.getTo().getTime()));
+            statement.setDate(3, DateTimeUtil.toSqlDate(order.getFrom()));
+            statement.setDate(4, DateTimeUtil.toSqlDate(order.getTo()));
             statement.setDouble(5, order.getTotalPrice());
             statement.execute();
 
@@ -89,8 +90,8 @@ public class OrderRepository {
 
             statement.setObject(1, order.getClientId());
             statement.setObject(2, order.getCarId());
-            statement.setDate(3, new java.sql.Date(order.getFrom().getTime()));
-            statement.setDate(4, new java.sql.Date(order.getTo().getTime()));
+            statement.setDate(3, DateTimeUtil.toSqlDate(order.getFrom()));
+            statement.setDate(4, DateTimeUtil.toSqlDate(order.getTo()));
             statement.setDouble(5, order.getTotalPrice());
             statement.setObject(6, order.getId());
             statement.execute();
@@ -127,8 +128,8 @@ public class OrderRepository {
         String GET_ORDER_BETWEEN_DATES = "SELECT * FROM \"order\" WHERE (\"from\" >= ? AND \"to\" <= ?) AND status";
         try (PreparedStatement statement = connection.prepareStatement(GET_ORDER_BETWEEN_DATES)) {
 
-            statement.setDate(1, new java.sql.Date(from.getTime()));
-            statement.setDate(2, new java.sql.Date(to.getTime()));
+            statement.setDate(1, DateTimeUtil.toSqlDate(from));
+            statement.setDate(2, DateTimeUtil.toSqlDate(to));
 
             ResultSet resultSet = statement.executeQuery(GET_ORDER_BETWEEN_DATES);
 
@@ -152,8 +153,8 @@ public class OrderRepository {
         try (PreparedStatement statement = connection.prepareStatement(GET_USER_ORDERS_BETWEEN_DATES)) {
 
             statement.setObject(1, userId);
-            statement.setDate(2, new java.sql.Date(from.getTime()));
-            statement.setDate(3, new java.sql.Date(to.getTime()));
+            statement.setDate(2, DateTimeUtil.toSqlDate(from));
+            statement.setDate(3, DateTimeUtil.toSqlDate(to));
 
             ResultSet resultSet = statement.executeQuery(GET_USER_ORDERS_BETWEEN_DATES);
 
