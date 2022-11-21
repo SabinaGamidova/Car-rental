@@ -194,7 +194,7 @@ public class OrderRepository {
     }
 
 
-    public boolean isUserExistById(UUID userId) {
+    public boolean isOrderExistByUserId(UUID userId) {
         String IS_USER_EXIST = "SELECT EXISTS (SELECT 1 FROM \"order\" WHERE client_id=? AND status)";
         try (PreparedStatement statement = connection.prepareStatement(IS_USER_EXIST)) {
             statement.setObject(1, userId);
@@ -215,7 +215,7 @@ public class OrderRepository {
     }
 
 
-    public boolean isCarExistById(UUID carId) {
+    public boolean isOrderExistByCarId(UUID carId) {
         String IS_CAR_EXIST = "SELECT EXISTS (SELECT 1 FROM \"order\" WHERE car_id=? AND status)";
         try (PreparedStatement statement = connection.prepareStatement(IS_CAR_EXIST)) {
             statement.setObject(1, carId);

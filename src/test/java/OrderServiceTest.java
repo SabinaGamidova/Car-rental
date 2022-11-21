@@ -437,28 +437,6 @@ public class OrderServiceTest {
         verifyNoMoreInteractions(orderRepositoryMock);
     }
 
-    //total price отрицательный
-    //getCarById() кидает эксепшен
-
-    /*@Test
-    public void whenCalculateOrderTotalPriceWithAbsentCarId_thenVerifyException() {
-        Order order = buildOrder(UUID.randomUUID());
-        Car absentCar = carRepositoryMock.getById(order.getId());
-        String exceptionMessage = String.format("Car with id %s not found", absentCar.getId());
-
-        //when(carRepositoryMock.isExistById(absentCar.getId())).thenReturn(Boolean.FALSE);
-
-        CarRentalException exception = assertThrows(
-                CarRentalException.class, () -> orderService.update(order));
-
-        assertNotNull(exception);
-        assertEquals(exceptionMessage, exception.getMessage());
-
-        verify(carRepositoryMock).isExistById(absentCar.getId());
-        verify(carRepositoryMock, never()).update(absentCar);
-        verifyNoMoreInteractions(carRepositoryMock);
-    }*/
-
 
     @Test
     public void whenDeleteCorrectOrder_thenVerifyTrue() {

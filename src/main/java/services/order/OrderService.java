@@ -46,13 +46,11 @@ public class OrderService implements OrderInterface, Transactionable {
 
     @Override
     public List<Order> getAll() {
-        log.info("Trying to get all orders");
         return orderRepository.getAll();
     }
 
     @Override
     public Order getById(UUID id) {
-        log.info("Trying to get order by id");
         if (Objects.isNull(id)) {
             log.error("Can not find order. Order id must be not null");
             throw new CarRentalException("Order id must be NOT null");
@@ -111,7 +109,6 @@ public class OrderService implements OrderInterface, Transactionable {
 
     @Override
     public List<Order> getByUserId(UUID userId) {
-        log.info("Trying to get all orders by the same user id");
         if (Objects.isNull(userId)) {
             log.error("Can not find orders. User id must be not null");
             throw new CarRentalException("User id must be NOT null");
@@ -121,7 +118,6 @@ public class OrderService implements OrderInterface, Transactionable {
 
     @Override
     public List<Order> getBetweenDates(Date from, Date to) {
-        log.info("Trying to get all orders between two dates");
         DateTimeUtil.validateWithToday(from);
         DateTimeUtil.validateWithToday(to);
         DateTimeUtil.validateDates(from, to);
@@ -130,7 +126,6 @@ public class OrderService implements OrderInterface, Transactionable {
 
     @Override
     public List<Order> getUserOrdersBetweenDates(UUID userId, Date from, Date to) {
-        log.info("Trying to get all user orders between two dates");
         if (Objects.isNull(userId)) {
             log.error("Can not find orders. User id must be not null");
             throw new CarRentalException("User id must be NOT null");
