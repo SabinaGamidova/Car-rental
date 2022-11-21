@@ -2,7 +2,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS role(
 	id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	name TEXT NOT NULL,
+	name TEXT NOT NULL UNIQUE,
 	description TEXT NOT NULL,
 	status BOOLEAN NOT NULL DEFAULT TRUE
 );
@@ -12,14 +12,13 @@ VALUES
 ('User', 'Regular customer'),
 ('Manager', 'Worker of car rental');
 
-
 CREATE TABLE IF NOT EXISTS "user"(
 	id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
 	name TEXT NOT NULL,
 	surname TEXT NOT NULL,
 	patronymic TEXT NOT NULL,
-	date_of_birth DATE NOT NULL,
-	email TEXT NOT NULL,
+	date_of_birth TIMESTAMPTZ NOT NULL,
+	email TEXT NOT NULL UNIQUE,
 	password TEXT NOT NULL,
 	role_id UUID NOT NULL,
 	status BOOLEAN NOT NULL DEFAULT TRUE,
@@ -120,4 +119,13 @@ CREATE TABLE IF NOT EXISTS "order"(
 	status BOOLEAN NOT NULL DEFAULT TRUE,
 	CONSTRAINT client_id_fk FOREIGN KEY (client_id) REFERENCES "user" (id),
 	CONSTRAINT car_id_fk FOREIGN KEY (car_id) REFERENCES car (id)
+);
+
+CREATE TABLE IF NOT EXISTS session(
+	id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
+	client_id UUID NOT NULL,
+	start TIMESTAMPTZ NOT NULL,
+	finish TIMESTAMPTZ DEFAULT NULL,
+	status BOOLEAN NOT NULL DEFAULT TRUE,
+	CONSTRAINT client_id_fk FOREIGN KEY (client_id) REFERENCES "user" (id)
 );

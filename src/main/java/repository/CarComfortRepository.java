@@ -94,7 +94,7 @@ public class CarComfortRepository {
 
 
     public boolean isExistById(UUID id) {
-        String IS_EXIST = "SELECT EXISTS (SELECT 1 FROM car_comfort WHERE id=?);";
+        String IS_EXIST = "SELECT EXISTS (SELECT 1 FROM car_comfort WHERE id=? AND status);";
         try (PreparedStatement statement = connection.prepareStatement(IS_EXIST)) {
             statement.setObject(1, id);
             ResultSet resultSet = statement.executeQuery();

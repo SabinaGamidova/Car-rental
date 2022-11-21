@@ -21,8 +21,4 @@ public class CarComfort {
     private String description;
     @Mappable(columnNumber = 4, dataType = Boolean.class)
     private boolean status;
-
-    /*PREMIUM(1,"premium"),
-    STANDARD(2, "standard"),
-    ECONOMY(3, "economy");*/
 }
