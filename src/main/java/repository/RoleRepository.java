@@ -4,8 +4,6 @@ import exception.CarRentalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mapper.Mapper;
-import models.cars.CarType;
-import models.cars.Engine;
 import models.people.Role;
 
 import java.sql.Connection;
@@ -63,7 +61,7 @@ public class RoleRepository {
                 return role;
             }
             resultSet.close();
-            throw new CarRentalException(String.format("Car type with id %s not found", id));
+            throw new CarRentalException("Role with id %s not found", id);
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
             throw new CarRentalException(exception.getMessage());
@@ -89,6 +87,42 @@ public class RoleRepository {
         try (PreparedStatement statement = connection.prepareStatement(INACTIVATE)) {
             statement.setObject(1, id);
             statement.execute();
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            throw new CarRentalException(exception.getMessage());
+        }
+    }
+
+
+    public Role getManagerRole(){
+        String GET_MANAGER_ROLE  = "SELECT * FROM role WHERE name='Manager' AND status;";
+        try (Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(GET_MANAGER_ROLE);
+            while (resultSet.next()) {
+                Role role = (Role) Mapper.mapSingleFromResultSet(resultSet, Role.class);
+                resultSet.close();
+                return role;
+            }
+            resultSet.close();
+            throw new CarRentalException("Manager role does not exist");
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            throw new CarRentalException(exception.getMessage());
+        }
+    }
+
+
+    public Role getUserRole(){
+        String GET_USER_ROLE  = "SELECT * FROM role WHERE name='User' AND status;";
+        try (Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(GET_USER_ROLE);
+            while (resultSet.next()) {
+                Role role = (Role) Mapper.mapSingleFromResultSet(resultSet, Role.class);
+                resultSet.close();
+                return role;
+            }
+            resultSet.close();
+            throw new CarRentalException("User role does not exist");
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
             throw new CarRentalException(exception.getMessage());

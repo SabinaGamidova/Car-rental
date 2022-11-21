@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mapper.Mapper;
 import models.people.User;
+import util.DateTimeUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,7 +27,7 @@ public class UserRepository {
             statement.setString(1, user.getName());
             statement.setString(2, user.getSurname());
             statement.setString(3, user.getPatronymic());
-            statement.setDate(4, new java.sql.Date(user.getDateOfBirth().getTime()));
+            statement.setDate(4, DateTimeUtil.toSqlDate(user.getDateOfBirth()));
             statement.setString(5, user.getEmail());
             statement.setString(6, user.getPassword());
             statement.setObject(7, user.getRoleId());
@@ -74,6 +75,26 @@ public class UserRepository {
         }
     }
 
+
+    public User getByEmail(String email) {
+        String GET_BY_ID = "SELECT * FROM \"user\" WHERE email=? AND status";
+        try (PreparedStatement statement = connection.prepareStatement(GET_BY_ID)) {
+            statement.setString(1, email);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                User user = (User) Mapper.mapSingleFromResultSet(resultSet, User.class);
+                resultSet.close();
+                return user;
+            }
+            resultSet.close();
+            throw new CarRentalException(String.format("User with email %s not found", email));
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            throw new CarRentalException(exception.getMessage());
+        }
+    }
+
+
     public User update(User user) {
         String UPDATE = "UPDATE \"user\" SET name = ?, " +
                 "surname = ?, patronymic = ?, " +
@@ -83,10 +104,12 @@ public class UserRepository {
             statement.setString(1, user.getName());
             statement.setString(2, user.getSurname());
             statement.setString(3, user.getPatronymic());
-            statement.setDate(4, new java.sql.Date(user.getDateOfBirth().getTime()));
+            statement.setDate(4, DateTimeUtil.toSqlDate(user.getDateOfBirth()));
             statement.setString(5, user.getEmail());
             statement.setString(6, user.getPassword());
             statement.setObject(7, user.getRoleId());
+            statement.setBoolean(8, user.isStatus());
+            statement.setObject(9, user.getId());
             statement.execute();
             return user;
         } catch (SQLException exception) {
@@ -96,7 +119,7 @@ public class UserRepository {
     }
 
     public boolean isExistById(UUID id) {
-        String IS_EXIST = "SELECT EXISTS (SELECT 1 FROM \"user\" WHERE id=?);";
+        String IS_EXIST = "SELECT EXISTS (SELECT 1 FROM \"user\" WHERE id=? AND status);";
         try (PreparedStatement statement = connection.prepareStatement(IS_EXIST)) {
             statement.setObject(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -108,6 +131,47 @@ public class UserRepository {
 
             resultSet.close();
             return isExist;
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            throw new CarRentalException(exception.getMessage());
+        }
+    }
+
+    public boolean isExistByEmail(String email) {
+        String IS_EXIST = "SELECT EXISTS (SELECT 1 FROM \"user\" WHERE email=? AND status);";
+        try (PreparedStatement statement = connection.prepareStatement(IS_EXIST)) {
+            statement.setString(1, email);
+            ResultSet resultSet = statement.executeQuery();
+
+            boolean isExist = Boolean.FALSE;
+            if (resultSet.next()) {
+                isExist = resultSet.getBoolean(1);
+            }
+
+            resultSet.close();
+            return isExist;
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            throw new CarRentalException(exception.getMessage());
+        }
+    }
+
+    public boolean isManager(UUID id) {
+        String IS_MANAGER = "SELECT EXISTS (SELECT 1 FROM \"user\" " +
+                "INNER JOIN \"role\" ON \"role\".id = \"user\".role_id " +
+                "WHERE \"user\".id=? AND \"user\".status " +
+                "AND \"role\".name='Manager' AND \"role\".status);";
+        try (PreparedStatement statement = connection.prepareStatement(IS_MANAGER)) {
+            statement.setObject(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            boolean isManager = Boolean.FALSE;
+            if (resultSet.next()) {
+                isManager = resultSet.getBoolean(1);
+            }
+
+            resultSet.close();
+            return isManager;
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
             throw new CarRentalException(exception.getMessage());

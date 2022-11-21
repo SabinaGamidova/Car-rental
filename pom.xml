@@ -20,6 +20,8 @@
         <formatter-maven-plugin.version>2.18.0</formatter-maven-plugin.version>
         <mockito-core.version>4.8.1</mockito-core.version>
         <mockito-junit-jupiter.version>4.8.1</mockito-junit-jupiter.version>
+        <jbcrypt.version>0.4</jbcrypt.version>
+        <joda-time.version>2.12.1</joda-time.version>
     </properties>
 
     <dependencies>
@@ -74,6 +76,19 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${mockito-junit-jupiter.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>${jbcrypt.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
         </dependency>
 
     </dependencies>
