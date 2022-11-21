@@ -16,7 +16,7 @@ public class FuelType {
     @Mappable(columnNumber = 1, dataType = UUID.class)
     private UUID id;
     @Mappable(columnNumber = 2, dataType = String.class)
-    private String description;
+    private String name;
     @Mappable(columnNumber = 3, dataType = Boolean.class)
     private boolean status;
 }

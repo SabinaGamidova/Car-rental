@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS "user"(
 
 CREATE TABLE IF NOT EXISTS transmission_type(
 	id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	name TEXT NOT NULL,
+	name TEXT NOT NULL UNIQUE,
 	status BOOLEAN NOT NULL DEFAULT TRUE
 );
 
@@ -40,11 +40,11 @@ VALUES
 
 CREATE TABLE IF NOT EXISTS fuel_type(
 	id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	description TEXT NOT NULL,
+	name TEXT NOT NULL UNIQUE,
 	status BOOLEAN NOT NULL DEFAULT TRUE
 );
 
-INSERT INTO fuel_type(description)
+INSERT INTO fuel_type(name)
 VALUES
 ('Petrol'),
 ('Diesel'),
