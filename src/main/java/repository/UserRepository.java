@@ -98,18 +98,16 @@ public class UserRepository {
     public User update(User user) {
         String UPDATE = "UPDATE \"user\" SET name = ?, " +
                 "surname = ?, patronymic = ?, " +
-                "date_of_birth = ?, email = ?, " +
-                "password = ?, role_id = ? WHERE id = ? AND status;";
+                "date_of_birth = ?, email = ?, role_id = ?, status=? WHERE id = ? AND status;";
         try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
             statement.setString(1, user.getName());
             statement.setString(2, user.getSurname());
             statement.setString(3, user.getPatronymic());
             statement.setDate(4, DateTimeUtil.toSqlDate(user.getDateOfBirth()));
             statement.setString(5, user.getEmail());
-            statement.setString(6, user.getPassword());
-            statement.setObject(7, user.getRoleId());
-            statement.setBoolean(8, user.isStatus());
-            statement.setObject(9, user.getId());
+            statement.setObject(6, user.getRoleId());
+            statement.setBoolean(7, user.isStatus());
+            statement.setObject(8, user.getId());
             statement.execute();
             return user;
         } catch (SQLException exception) {
@@ -117,6 +115,20 @@ public class UserRepository {
             throw new CarRentalException(exception.getMessage());
         }
     }
+
+
+    public boolean updatePassword(User user) {
+        String UPDATE = "UPDATE \"user\" SET password=? WHERE id = ? AND status;";
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+            statement.setString(1, user.getPassword());
+            statement.setObject(2, user.getId());
+            return statement.executeUpdate() == 1;
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            throw new CarRentalException(exception.getMessage());
+        }
+    }
+
 
     public boolean isExistById(UUID id) {
         String IS_EXIST = "SELECT EXISTS (SELECT 1 FROM \"user\" WHERE id=? AND status);";

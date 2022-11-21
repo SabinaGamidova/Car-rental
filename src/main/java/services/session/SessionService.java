@@ -34,7 +34,9 @@ public class SessionService implements SessionInterface {
     public void close() {
         if (sessionRepository.isExistOpenSessions()) {
             sessionRepository.close();
+            return;
         }
+        log.error("There is no open session");
     }
 
     @Override

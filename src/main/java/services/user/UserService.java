@@ -16,10 +16,7 @@ import services.session.SessionService;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
-import static services.user.PasswordSize.MAX_SIZE;
-import static services.user.PasswordSize.MIN_SIZE;
 
 @Slf4j
 @AllArgsConstructor
@@ -35,7 +32,7 @@ public class UserService implements UserInterface, Transactionable {
 
     @Override
     public boolean isManager(UUID userId) {
-        if(Objects.isNull(userId)){
+        if (Objects.isNull(userId)) {
             return Boolean.FALSE;
         }
         return userRepository.isManager(userId);
@@ -45,7 +42,7 @@ public class UserService implements UserInterface, Transactionable {
     public User register(User user) {
         log.info("Trying to register new user");
         validateUser(user);
-        if(userRepository.isExistByEmail(user.getEmail())){
+        if (userRepository.isExistByEmail(user.getEmail())) {
             throw new CarRentalException("User with such an email exists");
         }
         Role userRole = roleRepository.getUserRole();
@@ -61,7 +58,7 @@ public class UserService implements UserInterface, Transactionable {
     @Override
     public User registerManager(String email) {
         log.info("Trying to register new manager");
-        if(StringUtils.isBlank(email)){
+        if (StringUtils.isBlank(email)) {
             throw new CarRentalException("Invalid email");
         }
         User newManager = userRepository.getByEmail(email);
@@ -115,24 +112,33 @@ public class UserService implements UserInterface, Transactionable {
             log.warn("User with id {} not found", user.getId());
             throw new CarRentalException("User with id %s not found", user.getId());
         }
-        if(!userRepository.isExistByEmail(user.getEmail())){
-            throw new CarRentalException("User with such an email does not exist, try another one");
-        }
+        validateNewUserEmail(user);
         User updatedUser = wrapIntoTransaction(() -> userRepository.update(user));
         log.info("User has been updated successfully");
         return updatedUser;
     }
 
 
-    public boolean updatePassword(UUID userId, String oldPassword, String newPassword){
+    private void validateNewUserEmail(User user) {
+        if (userRepository.isExistByEmail(user.getEmail())) {
+            User userByEmail = userRepository.getByEmail(user.getEmail());
+            if (!userByEmail.getId().equals(user.getId())) {
+                throw new CarRentalException("User with such an email already exists, try another one");
+            }
+        }
+    }
+
+
+    public boolean updatePassword(UUID userId, String oldPassword, String newPassword) {
         User user = userRepository.getById(userId);
-        if(!PasswordEncoder.isMatch(oldPassword, user.getPassword())){
+        if (!PasswordEncoder.isMatch(oldPassword, user.getPassword())) {
             throw new CarRentalException("You entered incorrect old password (doesn't match)");
         }
-        if(oldPassword.equals(newPassword)){
+        if (oldPassword.equals(newPassword)) {
             throw new CarRentalException("New password must be different from old one");
         }
-        return Boolean.TRUE;
+        user.setPassword(PasswordEncoder.encode(newPassword));
+        return userRepository.updatePassword(user);
     }
 
     @Override
@@ -151,9 +157,9 @@ public class UserService implements UserInterface, Transactionable {
     }
 
 
-    private void checkIsExistAndCloseSession(UUID id){
+    private void checkIsExistAndCloseSession(UUID id) {
         Session session = sessionService.getActive();
-        if(session.getUserId().equals(id)){
+        if (session.getUserId().equals(id)) {
             sessionService.close();
         }
     }

@@ -32,9 +32,9 @@ public class UserServiceTest {
 
     @BeforeEach
     public void setUp() {
-        userService = new UserService(userRepositoryMock);
+        /*userService = new UserService(userRepositoryMock);
         assertNotNull(userRepositoryMock);
-        assertNotNull(userService);
+        assertNotNull(userService);*/
     }
 
     @Test
