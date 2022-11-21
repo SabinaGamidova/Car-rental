@@ -10,6 +10,8 @@ public class ExceptionHandler {
             System.out.println("You entered invalid data, please try again");
         } catch (IllegalArgumentException exception) {
             System.out.println("You entered invalid date, please try again");
+        } catch (IndexOutOfBoundsException exception) {
+            System.out.println("You entered invalid position, please try again");
         }
     }
 }
