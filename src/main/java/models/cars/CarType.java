@@ -27,6 +27,6 @@ public class CarType {
     }
 
     public String toShortString() {
-        return String.format(" | Name: %-8s |\n", name);
+        return String.format(" | Name: %-10s |\n", name);
     }
 }

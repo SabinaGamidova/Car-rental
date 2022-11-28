@@ -24,10 +24,10 @@ public class CarComfort {
 
     @Override
     public String toString() {
-        return "\nName: " + name + "\nDescription = " + description + "\n";
+        return "\nName: " + name + "\nDescription: " + description + "\n";
     }
 
     public String toShortString() {
-        return String.format(" | Name: %-8s| Description: %s\n", name, description);
+        return String.format(" | Name: %-10s| Description: %s\n", name, description);
     }
 }

@@ -51,9 +51,9 @@ public class CarComfortController {
 
     private void createCarComfort() {
         handleException(() -> {
-            System.out.println("Enter name:");
+            System.out.println("\nEnter name:");
             String name = scanner.nextLine();
-            System.out.println("Enter description:");
+            System.out.println("\nEnter description:");
             String description = scanner.nextLine();
             CarComfort carComfort = CarComfort
                     .builder()
@@ -61,13 +61,19 @@ public class CarComfortController {
                     .description(description)
                     .build();
             carComfortService.insert(carComfort);
+            System.out.println("\nNew car comfort created");
         });
     }
 
     private void getAllCarComforts() {
         handleException(() -> {
             AtomicInteger counter = new AtomicInteger(1);
-            carComfortService.getAll().forEach(carComfort -> System.out.println("#" + counter.getAndIncrement() + carComfort.toShortString()));
+            List<CarComfort> carComforts = carComfortService.getAll();
+            if (carComforts.isEmpty()) {
+                throw new CarRentalException("\nNo car comforts exist yet");
+            }
+            System.out.println();
+            carComforts.forEach(carComfort -> System.out.println("#" + counter.getAndIncrement() + carComfort.toShortString()));
         });
     }
 
@@ -83,15 +89,15 @@ public class CarComfortController {
 
     private void chooseForUpdate(CarComfort carComfort) {
         int choose;
-        System.out.println("1 - Name\n2 - Description\n");
+        System.out.println("\n1 - Name\n2 - Description\n");
         choose = Integer.parseInt(scanner.nextLine());
         switch (choose) {
             case 1 -> {
-                System.out.println("Enter new name:");
+                System.out.println("\nEnter new name:");
                 carComfort.setName(scanner.nextLine());
             }
             case 2 -> {
-                System.out.println("Enter new description:");
+                System.out.println("\nEnter new description:");
                 carComfort.setDescription(scanner.nextLine());
             }
             default -> {
@@ -106,7 +112,7 @@ public class CarComfortController {
 
     private void deleteCarComfort() {
         handleException(() -> {
-            System.out.println("\nChoose car comfort you wanna delete:");
+            //System.out.println("\nChoose car comfort you wanna delete:");
             CarComfort carComfort = chooseCarComfortByPosition();
             if (carComfortService.delete(carComfort.getId())) {
                 System.out.println("\nCar comfort was deleted successfully\n");
@@ -117,12 +123,15 @@ public class CarComfortController {
     }
 
     private CarComfort chooseCarComfortByPosition() {
+        List<CarComfort> carComforts = carComfortService.getAll();
+        if (carComforts.isEmpty()) {
+            throw new CarRentalException("\nNo car comforts exist yet");
+        }
         getAllCarComforts();
         System.out.println("\nEnter the position of necessary car comfort:");
         int position = Integer.parseInt(scanner.nextLine());
-        List<CarComfort> carComforts = carComfortService.getAll();
         if (position <= 0 || position > carComforts.size() + 1) {
-            throw new CarRentalException("Incorrect position entered");
+            throw new CarRentalException("\nIncorrect position entered");
         }
         return carComforts.get(position - 1);
     }

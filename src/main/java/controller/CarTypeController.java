@@ -10,6 +10,7 @@ import services.user.UserService;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static exception.ExceptionHandler.handleException;
 
@@ -39,7 +40,7 @@ public class CarTypeController {
                         case 5 -> {
                             return;
                         }
-                        default -> System.out.println("Entered incorrect data");
+                        default -> System.out.println("\nEntered incorrect data");
                     }
                 } else {
                     return;
@@ -50,7 +51,7 @@ public class CarTypeController {
 
     private void createCarType() {
         handleException(() -> {
-            System.out.println("Enter name:");
+            System.out.println("\nEnter name:");
             String name = scanner.nextLine();
             CarType carType = CarType
                     .builder()
@@ -61,14 +62,22 @@ public class CarTypeController {
     }
 
     private void getAllCarTypes() {
-        handleException(() -> carTypeService.getAll().forEach(System.out::println));
+        handleException(() -> {
+            AtomicInteger counter = new AtomicInteger(1);
+            List<CarType> carTypes = carTypeService.getAll();
+            if (carTypes.isEmpty()) {
+                throw new CarRentalException("\nNo car types exist yet");
+            }
+            System.out.println();
+            carTypes.forEach(carType -> System.out.println("#" + counter.getAndIncrement() + carType.toShortString()));
+        });
     }
 
 
     private void updateCarType() {
         handleException(() -> {
             CarType carType = chooseCarTypeByPosition();
-            System.out.println("Enter new name:");
+            System.out.println("\nEnter new name:");
             carType.setName(scanner.nextLine());
             carTypeService.update(carType);
             System.out.println("\nCar type was updated successfully\n");
@@ -79,7 +88,8 @@ public class CarTypeController {
 
     private void deleteCarType() {
         handleException(() -> {
-            System.out.println("\nChoose car type you wanna delete:");
+
+            //System.out.println("\nChoose car type you wanna delete:");
             CarType carType = chooseCarTypeByPosition();
             if (carTypeService.delete(carType.getId())) {
                 System.out.println("\nCar type was deleted successfully\n");
@@ -90,13 +100,16 @@ public class CarTypeController {
     }
 
     private CarType chooseCarTypeByPosition() {
-        getAllCarTypes();
-        System.out.println("\nEnter the position of necessary car type:");
-        int position = Integer.parseInt(scanner.nextLine());
-        List<CarType> carTypes = carTypeService.getAll();
-        if (position <= 0 || position > carTypes.size() + 1) {
-            throw new CarRentalException("Incorrect position entered");
-        }
-        return carTypes.get(position - 1);
+            List<CarType> carTypes = carTypeService.getAll();
+            if (carTypes.isEmpty()) {
+                throw new CarRentalException("\nNo car types exist yet");
+            }
+            getAllCarTypes();
+            System.out.println("\nEnter the position of necessary car type:");
+            int position = Integer.parseInt(scanner.nextLine());
+            if (position <= 0 || position > carTypes.size() + 1) {
+                throw new CarRentalException("\nIncorrect position entered");
+            }
+            return carTypes.get(position - 1);
     }
 }

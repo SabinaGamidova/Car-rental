@@ -33,7 +33,7 @@ public class Controller {
 
     private void authenticatedUserInterface() {
         handleException(() -> {
-            System.out.println("Choose the item:\n" +
+            System.out.println("\nChoose the item:\n" +
                     "1 - Account actions\n2 - Order operations\n" +
                     "3 - Car operations\n4 - Car type operations\n" +
                     "5 - Car comfort operations\n6 - Engine operations\n" +
@@ -54,7 +54,7 @@ public class Controller {
 
     private void notAuthenticatedUserInterface() {
         handleException(() -> {
-            System.out.println("Choose the item:\n1 - Log in\n2 - Register");
+            System.out.println("\nChoose the item:\n1 - Log in\n2 - Register");
             int choose = Integer.parseInt(scanner.nextLine());
             switch (choose) {
                 case 1 -> authController.logIn();
