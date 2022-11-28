@@ -85,7 +85,7 @@ public class OrderRepository {
     }
 
     public Order update(Order order) {
-        String UPDATE = "UPDATE \"order\" SET client_id = ?, car_id = ?, \"from\" = ?, \"to\" = ?, total_price = ? WHERE id = ? AND status;";
+        String UPDATE = "UPDATE \"order\" SET client_id = ?, car_id = ?, \"from\" = ?, \"to\" = ?, total_price = ?, status=? WHERE id = ? AND status;";
         try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
 
             statement.setObject(1, order.getClientId());
@@ -93,7 +93,8 @@ public class OrderRepository {
             statement.setDate(3, DateTimeUtil.toSqlDate(order.getFrom()));
             statement.setDate(4, DateTimeUtil.toSqlDate(order.getTo()));
             statement.setDouble(5, order.getTotalPrice());
-            statement.setObject(6, order.getId());
+            statement.setBoolean(6, order.isStatus());
+            statement.setObject(7, order.getId());
             statement.execute();
 
             return order;
@@ -105,9 +106,10 @@ public class OrderRepository {
 
     public List<Order> getByUserId(UUID userId) {
         String GET_BY_USER_ID = "SELECT * FROM \"order\" WHERE client_id = ? AND status";
-        try (Statement statement = connection.createStatement()) {
+        try (PreparedStatement statement = connection.prepareStatement(GET_BY_USER_ID)) {
+            statement.setObject(1, userId);
 
-            ResultSet resultSet = statement.executeQuery(GET_BY_USER_ID);
+            ResultSet resultSet = statement.executeQuery();
 
             List<Order> list = new ArrayList<>();
 
@@ -131,7 +133,7 @@ public class OrderRepository {
             statement.setDate(1, DateTimeUtil.toSqlDate(from));
             statement.setDate(2, DateTimeUtil.toSqlDate(to));
 
-            ResultSet resultSet = statement.executeQuery(GET_ORDER_BETWEEN_DATES);
+            ResultSet resultSet = statement.executeQuery();
 
             List<Order> list = new ArrayList<>();
             while (resultSet.next()) {
@@ -156,7 +158,7 @@ public class OrderRepository {
             statement.setDate(2, DateTimeUtil.toSqlDate(from));
             statement.setDate(3, DateTimeUtil.toSqlDate(to));
 
-            ResultSet resultSet = statement.executeQuery(GET_USER_ORDERS_BETWEEN_DATES);
+            ResultSet resultSet = statement.executeQuery();
 
             List<Order> list = new ArrayList<>();
             while (resultSet.next()) {

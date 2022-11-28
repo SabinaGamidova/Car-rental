@@ -108,7 +108,7 @@ public class OrderService implements OrderInterface, Transactionable {
     }
 
     @Override
-    public List<Order> getByUserId(UUID userId) {
+    public List<Order> getOrdersByUserId(UUID userId) {
         if (Objects.isNull(userId)) {
             log.error("Can not find orders. User id must be not null");
             throw new CarRentalException("User id must be NOT null");

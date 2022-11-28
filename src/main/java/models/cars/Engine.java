@@ -27,4 +27,14 @@ public class Engine {
     private double fuelConsumption;
     @Mappable(columnNumber = 7, dataType = Boolean.class)
     private boolean status;
+
+    @Override
+    public String toString() {
+        return "\nMax speed: " + maxSpeed + "\nVolume = " + volume +
+                "\nFuel consumption: " + fuelConsumption + "\n";
+    }
+
+    public String toShortString() {
+        return String.format(" | Max speed: %-5d| Volume: %-5f | Fuel consumption: %f\n", maxSpeed, volume, fuelConsumption);
+    }
 }

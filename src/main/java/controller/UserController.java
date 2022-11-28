@@ -10,6 +10,7 @@ import util.DateTimeUtil;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static exception.ExceptionHandler.handleException;
 
@@ -118,7 +119,10 @@ public class UserController {
     }
 
     private void getAll() {
-        handleException(() -> userService.getAll().forEach(System.out::println));
+        handleException(() -> {
+            AtomicInteger counter = new AtomicInteger(1);
+            userService.getAll().forEach(user -> System.out.println("#" + counter.getAndIncrement() + user.toShortString()));
+        });
     }
 
 

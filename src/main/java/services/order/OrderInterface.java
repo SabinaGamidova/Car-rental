@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface OrderInterface extends CrudGenericInterface<Order>{
     Order formOrder(Order order);
 
-    List<Order> getByUserId(UUID userId);
+    List<Order> getOrdersByUserId(UUID userId);
 
     List<Order> getBetweenDates(Date from, Date to);
 

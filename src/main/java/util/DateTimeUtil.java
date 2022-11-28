@@ -9,7 +9,7 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public final class DateTimeUtil {
-    public static final String DATE_PATTERN = "dd-mm-yyyy";
+    public static final String DATE_PATTERN = "dd-MM-yyyy";
 
     public static void validateWithToday(Date date) {
         DateTimeComparator comparator = DateTimeComparator.getDateOnlyInstance();

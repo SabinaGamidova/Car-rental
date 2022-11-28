@@ -7,6 +7,7 @@ import mapper.Mapper;
 import models.cars.Car;
 import models.cars.CarComfort;
 import models.cars.CarType;
+import util.DateTimeUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -82,7 +84,7 @@ public class CarRepository {
     }
 
     public Car update(Car car) {
-        String UPDATE = "UPDATE car SET number = ?, brand = ?, model = ?, car_type_id = ?, car_comfort_id = ?, engine_id = ?, price = ?, deposit = ? WHERE id = ? AND status;";
+        String UPDATE = "UPDATE car SET number = ?, brand = ?, model = ?, car_type_id = ?, car_comfort_id = ?, engine_id = ?, price = ?, deposit = ?, status=? WHERE id = ? AND status;";
         try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
             statement.setString(1, car.getNumber());
             statement.setString(2, car.getBrand());
@@ -92,6 +94,8 @@ public class CarRepository {
             statement.setObject(6, car.getEngineId());
             statement.setDouble(7, car.getPrice());
             statement.setDouble(8, car.getDeposit());
+            statement.setBoolean(9, car.isStatus());
+            statement.setObject(10, car.getId());
             statement.execute();
             return car;
         } catch (SQLException exception) {
@@ -155,6 +159,32 @@ public class CarRepository {
 
             resultSet.close();
             return isExist;
+        } catch (SQLException exception) {
+            log.error("Can not process statement", exception);
+            throw new CarRentalException(exception.getMessage());
+        }
+    }
+
+    public List<Car> getAvailable(Date from, Date to) {
+        String GET_AVAILABLE = "SELECT DISTINCT car.* FROM car " +
+                "LEFT JOIN \"order\" ON \"order\".car_id = car.id " +
+                "WHERE (\"order\".\"to\" <= ?) OR (\"order\".\"from\" >= ?) " +
+                "AND car.status " +
+                "AND \"order\".status OR \"order\".status IS NULL " +
+                "AND \"order\".\"to\" >= NOW() OR \"order\".\"to\" IS NULL;";
+        try (PreparedStatement statement = connection.prepareStatement(GET_AVAILABLE)) {
+            statement.setDate(1, DateTimeUtil.toSqlDate(from));
+            statement.setDate(2, DateTimeUtil.toSqlDate(to));
+            ResultSet resultSet = statement.executeQuery();
+
+            List<Car> list = new ArrayList<>();
+            while (resultSet.next()) {
+                Car car = (Car) Mapper.mapSingleFromResultSet(resultSet, Car.class);
+                list.add(car);
+            }
+
+            resultSet.close();
+            return list;
         } catch (SQLException exception) {
             log.error("Can not process statement", exception);
             throw new CarRentalException(exception.getMessage());

@@ -22,7 +22,7 @@ public class TransmissionTypeService {
     public TransmissionType getByName(String name) {
         if (StringUtils.isBlank(name)) {
             log.error("Invalid name for transmission type");
-            throw new CarRentalException("Transmission type name must be valid");
+            throw new CarRentalException("Transmission type must be not blank");
         }
         return transmissionTypeRepository.getByName(name);
     }

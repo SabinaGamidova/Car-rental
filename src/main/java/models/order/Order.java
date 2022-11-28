@@ -28,4 +28,14 @@ public class Order {
     private double totalPrice;
     @Mappable(columnNumber = 7, dataType = Boolean.class)
     private boolean status;
+
+
+    @Override
+    public String toString() {
+        return "\nDate from: " + from + "\nDate to: " + to + "\nTotal price: " + totalPrice + "\n";
+    }
+
+    public String toShortString() {
+        return String.format(" | Date from: %-10s| Date to: %-10s | Total price: %.2f\n", from, to, totalPrice);
+    }
 }

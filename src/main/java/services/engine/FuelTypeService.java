@@ -22,7 +22,7 @@ public class FuelTypeService {
     public FuelType getByName(String name) {
         if (StringUtils.isBlank(name)) {
             log.error("Invalid name for fuel type");
-            throw new CarRentalException("Fuel type name must be valid");
+            throw new CarRentalException("Fuel type must be not blank");
         }
         return fuelTypeRepository.getByName(name);
     }

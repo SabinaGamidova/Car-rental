@@ -19,4 +19,9 @@ public class TransmissionType {
     private String name;
     @Mappable(columnNumber = 3, dataType = Boolean.class)
     private boolean status;
+
+    @Override
+    public String toString() {
+        return "\nName: " + name + "\n";
+    }
 }

@@ -10,6 +10,7 @@ import services.user.UserService;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static exception.ExceptionHandler.handleException;
 
@@ -24,7 +25,7 @@ public class CarComfortController {
         handleException(() -> {
             Session session = sessionService.getActive();
             while (true) {
-                if (userService.isManager(session.getUserId()) && sessionService.isUserAuthenticated()) {
+                if (userService.isManager(session.getUserId())) {
                     System.out.println("\nChoose item:\n1 - Create new car comfort\n" +
                             "2 - Get all car comforts\n" +
                             "3 - Update car comfort\n" +
@@ -64,7 +65,10 @@ public class CarComfortController {
     }
 
     private void getAllCarComforts() {
-        handleException(() -> carComfortService.getAll().forEach(System.out::println));
+        handleException(() -> {
+            AtomicInteger counter = new AtomicInteger(1);
+            carComfortService.getAll().forEach(carComfort -> System.out.println("#" + counter.getAndIncrement() + carComfort.toShortString()));
+        });
     }
 
 

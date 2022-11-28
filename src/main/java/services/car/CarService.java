@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import models.cars.Car;
 import org.apache.commons.lang3.StringUtils;
 import repository.CarRepository;
+import util.DateTimeUtil;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -40,6 +42,14 @@ public class CarService implements CarInterface, Transactionable {
             throw new CarRentalException("Car id must be NOT null");
         }
         return carRepository.getById(id);
+    }
+
+    public List<Car> getAvailableCars(Date from, Date to) {
+        log.info("Trying to get available cars");
+        DateTimeUtil.validateWithToday(from);
+        DateTimeUtil.validateWithToday(to);
+        DateTimeUtil.validateDates(from, to);
+        return carRepository.getAvailable(from, to);
     }
 
     @Override

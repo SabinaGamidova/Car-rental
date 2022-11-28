@@ -24,7 +24,7 @@ public class CarTypeController {
         handleException(() -> {
             Session session = sessionService.getActive();
             while (true) {
-                if (userService.isManager(session.getUserId()) && sessionService.isUserAuthenticated()) {
+                if (userService.isManager(session.getUserId())) {
                     System.out.println("\nChoose item:\n1 - Create new car type\n" +
                             "2 - Get all car types\n" +
                             "3 - Update car type\n" +
