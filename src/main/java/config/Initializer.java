@@ -69,6 +69,6 @@ public class Initializer {
         CarComfortController carComfortController = new CarComfortController(carComfortService, sessionService, userService, scanner);
         CarController carController = new CarController(carService, userService, sessionService, carComfortService, carTypeService, engineService, scanner);
         OrderController orderController = new OrderController(orderService, carService, userService, sessionService, scanner);
-        return new Controller(authController, userController, engineController, carComfortController, carTypeController, carController, sessionService, orderController, scanner);
+        return new Controller(authController, userController, engineController, carComfortController, carTypeController, carController, orderController,sessionService, userService, scanner);
     }
 }

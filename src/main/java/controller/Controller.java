@@ -1,9 +1,10 @@
 package controller;
 
 import lombok.RequiredArgsConstructor;
-import services.engine.EngineService;
-import services.order.OrderService;
+import models.people.User;
+import models.session.Session;
 import services.session.SessionService;
+import services.user.UserService;
 
 import java.util.Scanner;
 
@@ -17,21 +18,27 @@ public class Controller {
     private final CarComfortController carComfortController;
     private final CarTypeController carTypeController;
     private final CarController carController;
-    private final SessionService sessionService;
     private final OrderController orderController;
+    private final SessionService sessionService;
+    private final UserService userService;
     private final Scanner scanner;
 
     public void programInterface() {
         while (true) {
             if (sessionService.isUserAuthenticated()) {
-                authenticatedUserInterface();
+                Session session = sessionService.getActive();
+                if (userService.isManager(session.getUserId())) {
+                    authenticatedManagerInterface();
+                } else {
+                    authenticatedUserInterface();
+                }
             } else {
                 notAuthenticatedUserInterface();
             }
         }
     }
 
-    private void authenticatedUserInterface() {
+    private void authenticatedManagerInterface() {
         handleException(() -> {
             System.out.println("\nChoose the item:\n" +
                     "1 - Account actions\n2 - Order operations\n" +
@@ -46,6 +53,21 @@ public class Controller {
                 case 4 -> carTypeController.programInterface();
                 case 5 -> carComfortController.programInterface();
                 case 6 -> engineController.programInterface();
+                case 0 -> authController.logOut();
+                default -> System.out.println("Entered incorrect data");
+            }
+        });
+    }
+
+
+    private void authenticatedUserInterface() {
+        handleException(() -> {
+            System.out.println("\nChoose the item:\n" +
+                    "1 - Account actions\n2 - Order operations\n0 - Log out");
+            int choose = Integer.parseInt(scanner.nextLine());
+            switch (choose) {
+                case 1 -> userController.programInterface();
+                case 2 -> orderController.programInterface();
                 case 0 -> authController.logOut();
                 default -> System.out.println("Entered incorrect data");
             }

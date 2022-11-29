@@ -15,6 +15,7 @@ import services.user.UserService;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static exception.ExceptionHandler.handleException;
 
@@ -30,27 +31,29 @@ public class EngineController {
 
     public void programInterface() {
         handleException(() -> {
-            Session session = sessionService.getActive();
-            while (true) {
-                if (userService.isManager(session.getUserId()) && sessionService.isUserAuthenticated()) {
-                    System.out.println("\nChoose item:\n1 - Insert new engine\n" +
-                            "2 - Get all engines\n" +
-                            "3 - Update engine\n" +
-                            "4 - Delete engine\n" +
-                            "5 - Return");
-                    int choose = Integer.parseInt(scanner.nextLine());
-                    switch (choose) {
-                        case 1 -> insertEngine();
-                        case 2 -> getAllEngine();
-                        case 3 -> updateEngine();
-                        case 4 -> deleteEngine();
-                        case 5 -> {
-                            return;
+            if(sessionService.isUserAuthenticated()){
+                Session session = sessionService.getActive();
+                while (true) {
+                    if (userService.isManager(session.getUserId())) {
+                        System.out.println("\nChoose item:\n1 - Insert new engine\n" +
+                                "2 - Get all engines\n" +
+                                "3 - Update engine\n" +
+                                "4 - Delete engine\n" +
+                                "5 - Return");
+                        int choose = Integer.parseInt(scanner.nextLine());
+                        switch (choose) {
+                            case 1 -> insertEngine();
+                            case 2 -> getAllEngines();
+                            case 3 -> updateEngine();
+                            case 4 -> deleteEngine();
+                            case 5 -> {
+                                return;
+                            }
+                            default -> System.out.println("Entered incorrect data");
                         }
-                        default -> System.out.println("Entered incorrect data");
+                    } else {
+                        return;
                     }
-                } else {
-                    return;
                 }
             }
         });
@@ -86,16 +89,16 @@ public class EngineController {
 
     public void insertEngine() {
         handleException(() -> {
-            System.out.println("Enter the max speed:");
+            System.out.println("\nEnter the max speed:");
             int maxSpeed = Integer.parseInt(scanner.nextLine());
 
             FuelType fuelType = chooseFuelType();
             TransmissionType transmissionType = chooseTransmissionType();
 
-            System.out.println("Enter the volume:");
+            System.out.println("\nEnter the volume:");
             double volume = Double.parseDouble(scanner.nextLine());
 
-            System.out.println("Enter the fuel consumption:");
+            System.out.println("\nEnter the fuel consumption:");
             double fuelConsumption = Double.parseDouble(scanner.nextLine());
 
             Engine insertedEngine = engineService.insert(Engine.builder()
@@ -105,15 +108,24 @@ public class EngineController {
                     .volume(volume)
                     .fuelConsumption(fuelConsumption)
                     .build());
-            System.out.println("Engine has been inserted successfully");
+            System.out.println("\nEngine has been inserted successfully");
             System.out.println(insertedEngine.toString());
         });
     }
 
 
-    private void getAllEngine() {
-        handleException(() -> engineService.getAll().forEach(System.out::println));
+    private void getAllEngines() {
+        handleException(() -> {
+            AtomicInteger counter = new AtomicInteger(1);
+            List<Engine> engines = engineService.getAll();
+            if (engines.isEmpty()) {
+                throw new CarRentalException("\nNo engines exist yet");
+            }
+            System.out.println();
+            engines.forEach(engine -> System.out.println("#" + counter.getAndIncrement() + engine.toShortString()));
+        });
     }
+
 
     private void updateEngine() {
         handleException(() -> {
@@ -124,7 +136,7 @@ public class EngineController {
             int choose = Integer.parseInt(scanner.nextLine());
             switch (choose) {
                 case 1 -> {
-                    System.out.println("Enter new max speed:");
+                    System.out.println("\nEnter new max speed:");
                     engine.setMaxSpeed(Integer.parseInt(scanner.nextLine()));
                 }
                 case 2 -> {
@@ -136,30 +148,31 @@ public class EngineController {
                     engine.setTransmissionTypeId(newTransmissionType.getId());
                 }
                 case 4 -> {
-                    System.out.println("Enter new volume:");
+                    System.out.println("\nEnter new volume:");
                     engine.setVolume(Double.parseDouble(scanner.nextLine()));
                 }
                 case 5 -> {
-                    System.out.println("Enter new fuel consumption:");
+                    System.out.println("\nEnter new fuel consumption:");
                     engine.setFuelConsumption(Double.parseDouble(scanner.nextLine()));
                 }
                 case 6 -> {
                     return;
                 }
                 default -> {
-                    System.out.println("You entered invalid data");
+                    System.out.println("\nYou entered invalid data");
                     System.out.println("\nEngine was NOT updated\n");
                     return;
                 }
             }
             engineService.update(engine);
             System.out.println("\nEngine was updated successfully\n");
+            System.out.println(engine.toString());
         });
     }
 
     private void deleteEngine() {
         handleException(() -> {
-            System.out.println("\nChoose engine you wanna delete:");
+            //System.out.println("\nChoose engine you wanna delete:");
             Engine engine = chooseEngineByPosition();
             if (engineService.delete(engine.getId())) {
                 System.out.println("\nEngine was deleted successfully\n");
@@ -170,12 +183,15 @@ public class EngineController {
     }
 
     private Engine chooseEngineByPosition() {
-        getAllEngine();
-        System.out.println("\nEnter the position of necessary engine:");
-        int position = Integer.parseInt(scanner.nextLine());
         List<Engine> engines = engineService.getAll();
+        if (engines.isEmpty()) {
+            throw new CarRentalException("\nNo engines exist yet");
+        }
+        getAllEngines();
+        System.out.println("\nEnter the position of necessary car type:");
+        int position = Integer.parseInt(scanner.nextLine());
         if (position <= 0 || position > engines.size() + 1) {
-            throw new CarRentalException("Incorrect position entered");
+            throw new CarRentalException("\nIncorrect position entered");
         }
         return engines.get(position - 1);
     }

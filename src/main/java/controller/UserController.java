@@ -34,7 +34,7 @@ public class UserController {
     private void managerInterface() {
         while (true) {
             if (sessionService.isUserAuthenticated()) {
-                System.out.println("Choose item:\n1 - Get your profile\n" +
+                System.out.println("\nChoose item:\n1 - Get your profile\n" +
                         "2 - Update your account\n3 - Delete your account\n" +
                         "4 - Register manager\n5 - Get all users\n" +
                         "6 - Get user by email\n7 - Delete user by id\n8 - Return");
@@ -50,7 +50,7 @@ public class UserController {
                     case 8 -> {
                         return;
                     }
-                    default -> System.out.println("Entered incorrect data");
+                    default -> System.out.println("\nEntered incorrect data");
                 }
             } else {
                 return;
@@ -72,7 +72,7 @@ public class UserController {
                     case 4 -> {
                         return;
                     }
-                    default -> System.out.println("Entered incorrect data");
+                    default -> System.out.println("\nEntered incorrect data");
                 }
             } else {
                 return;
@@ -82,17 +82,17 @@ public class UserController {
 
     public void register() {
         handleException(() -> {
-            System.out.println("Enter your name:");
+            System.out.println("\nEnter your name:");
             String name = scanner.nextLine();
-            System.out.println("Enter your surname:");
+            System.out.println("\nEnter your surname:");
             String surname = scanner.nextLine();
-            System.out.println("Enter your patronymic:");
+            System.out.println("\nEnter your patronymic:");
             String patronymic = scanner.nextLine();
-            System.out.println("Enter date of your birth " + DateTimeUtil.DATE_PATTERN + ":");
+            System.out.println("\nEnter date of your birth " + DateTimeUtil.DATE_PATTERN + ":");
             Date dateOfBirth = DateTimeUtil.parseFromString(scanner.nextLine());
-            System.out.println("Enter email:");
+            System.out.println("\nEnter email:");
             String email = scanner.nextLine();
-            System.out.println("Enter password:");
+            System.out.println("\nEnter password:");
             String password = scanner.nextLine();
             User registeredUser = userService.register(User.builder()
                     .name(name)
@@ -102,18 +102,18 @@ public class UserController {
                     .email(email)
                     .password(password)
                     .build());
-            System.out.println("You have been registered successfully");
+            System.out.println("\nYou have been registered successfully");
             System.out.println(registeredUser.toString());
         });
     }
 
 
     private void registerManager() {
-        System.out.println("Enter email of a new manager:");
+        System.out.println("\nEnter email of a new manager:");
         String email = scanner.nextLine();
         handleException(() -> {
             User registeredManager = userService.registerManager(email);
-            System.out.println("New manager has been registered successfully");
+            System.out.println("\nNew manager has been registered successfully");
             System.out.println(registeredManager.toString());
         });
     }
@@ -128,7 +128,7 @@ public class UserController {
 
     private void getByEmail() {
         handleException(() -> {
-            System.out.println("Enter the email of necessary user:");
+            System.out.println("\nEnter the email of necessary user:");
             String email = scanner.nextLine();
             User user = userService.getByEmail(email);
             System.out.println(user.toString());
@@ -148,52 +148,51 @@ public class UserController {
         handleException(() -> {
             getProfile();
             chooseAndUpdate();
-            System.out.println("Your account updated successfully");
+            System.out.println("\nYour account updated successfully");
             getProfile();
         });
     }
 
 
     private void chooseAndUpdate() {
-        int choose;
         Session curSession = sessionService.getActive();
         User user = userService.getById(curSession.getUserId());
-        System.out.println("1 - Name\n2 - Surname\n" +
+        System.out.println("\n1 - Name\n2 - Surname\n" +
                 "3 - Patronymic\n4 - Date of birth\n" +
                 "5 - Email\n6 - Password");
-        choose = Integer.parseInt(scanner.nextLine());
+        int choose = Integer.parseInt(scanner.nextLine());
         switch (choose) {
             case 1 -> {
-                System.out.println("Enter new name:");
+                System.out.println("\nEnter new name:");
                 user.setName(scanner.nextLine());
             }
             case 2 -> {
-                System.out.println("Enter new surname:");
+                System.out.println("\nEnter new surname:");
                 user.setSurname(scanner.nextLine());
             }
             case 3 -> {
-                System.out.println("Enter new patronymic:");
+                System.out.println("\nEnter new patronymic:");
                 user.setPatronymic(scanner.nextLine());
             }
             case 4 -> {
-                System.out.println("Enter new date of birth " + DateTimeUtil.DATE_PATTERN + ":");
+                System.out.println("\nEnter new date of birth " + DateTimeUtil.DATE_PATTERN + ":");
                 Date dateOfBirth = DateTimeUtil.parseFromString(scanner.nextLine());
                 user.setDateOfBirth(dateOfBirth);
             }
             case 5 -> {
-                System.out.println("Enter new email:");
+                System.out.println("\nEnter new email:");
                 user.setEmail(scanner.nextLine());
             }
             case 6 -> {
-                System.out.println("Enter old password:");
+                System.out.println("\nEnter old password:");
                 String oldPassword = scanner.nextLine();
-                System.out.println("Enter new password:");
+                System.out.println("\nEnter new password:");
                 String newPassword = scanner.nextLine();
                 userService.updatePassword(user.getId(), oldPassword, newPassword);
                 return;
             }
             default -> {
-                System.out.println("You entered invalid data");
+                System.out.println("\nYou entered invalid data");
                 return;
             }
         }
@@ -203,22 +202,28 @@ public class UserController {
 
     private void delete() {
         handleException(() -> {
-            System.out.println("Are you sure you wanna delete your account?\n1 - Yes\n2 - No");
+            System.out.println("\nAre you sure you wanna delete your account?\n1 - Yes\n2 - No");
             int choose = Integer.parseInt(scanner.nextLine());
             if (choose == 1) {
                 Session curSession = sessionService.getActive();
-                userService.delete(curSession.getUserId());
-                System.out.println("Your account deleted successfully");
+                if(userService.delete(curSession.getUserId())){
+                    System.out.println("\nYour account deleted successfully");
+                    return;
+                }
+                System.out.println("\nYour account was NOT deleted");
             }
         });
     }
 
     private void deleteById() {
         handleException(() -> {
-            System.out.println("Enter the user id:");
+            System.out.println("\nEnter the user id:");
             UUID id = UUID.fromString(scanner.nextLine());
-            userService.delete(id);
-            System.out.println("User account with such an id deleted successfully");
+            if(userService.delete(id)){
+                System.out.println("\nUser account with such an id deleted successfully");
+                return;
+            }
+            System.out.println("\nUser account with such an id was NOT deleted");
         });
     }
 }

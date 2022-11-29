@@ -88,8 +88,6 @@ public class CarTypeController {
 
     private void deleteCarType() {
         handleException(() -> {
-
-            //System.out.println("\nChoose car type you wanna delete:");
             CarType carType = chooseCarTypeByPosition();
             if (carTypeService.delete(carType.getId())) {
                 System.out.println("\nCar type was deleted successfully\n");

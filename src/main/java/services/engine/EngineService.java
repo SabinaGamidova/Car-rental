@@ -71,19 +71,19 @@ public class EngineService implements CrudGenericInterface<Engine>, Transactiona
 
     private void validateEngine(Engine engine) {
         if (Objects.isNull(engine) || Objects.isNull(engine.getFuelTypeId()) || Objects.isNull(engine.getTransmissionTypeId())) {
-            log.error("Engine is null {}", engine);
+            log.error("Engine is null {} or incorrect id for fuel/transmission type", engine);
             throw new CarRentalException("Engine must be NOT null");
         }
         if (engine.getMaxSpeed() <= 0 || engine.getMaxSpeed() > EngineCharacteristics.MAX_SPEED) {
-            log.error("Invalid max speed");
+            log.error("Invalid max speed - not within the acceptable range");
             throw new CarRentalException("Max speed must be less than " + EngineCharacteristics.MAX_SPEED + " km/h");
         }
         if(engine.getVolume() <= 0 || engine.getVolume() > EngineCharacteristics.MAX_VOLUME){
-            log.error("Invalid volume");
+            log.error("Invalid volume - not within the acceptable range");
             throw new CarRentalException("Volume must be less than " + EngineCharacteristics.MAX_VOLUME);
         }
         if(engine.getFuelConsumption() <= 0 || engine.getFuelConsumption() > EngineCharacteristics.MAX_FUEL_CONSUMPTION){
-            log.error("Invalid fuel consumption");
+            log.error("Invalid fuel consumption - not within the acceptable range");
             throw new CarRentalException("Fuel consumption must be less than " + EngineCharacteristics.MAX_FUEL_CONSUMPTION);
         }
     }

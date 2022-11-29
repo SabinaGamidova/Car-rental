@@ -118,16 +118,14 @@ public class OrderController {
 
 
     private void chooseAndUpdateForUser() {
-        int choose;
-
         Session curSession = sessionService.getActive();
         User user = userService.getById(curSession.getUserId());
         List<Order> orders = orderService.getOrdersByUserId(user.getId());
         System.out.println();
         Order order = chooseOrderFromOrdersList(orders);
 
-        System.out.println("\n1 - Date from\n2 - Date to\n3 - Return\n");
-        choose = Integer.parseInt(scanner.nextLine());
+        System.out.println("\n1 - Date from\n2 - Date to");
+        int choose = Integer.parseInt(scanner.nextLine());
         switch (choose) {
             case 1 -> {
                 System.out.println("\nEnter new date FROM in format " + DateTimeUtil.DATE_PATTERN + ":");
@@ -138,9 +136,6 @@ public class OrderController {
                 System.out.println("\nEnter new date TO in format " + DateTimeUtil.DATE_PATTERN + ":");
                 Date dateTo = DateTimeUtil.parseFromString(scanner.nextLine());
                 order.setTo(dateTo);
-            }
-            case 3 -> {
-                return;
             }
             default -> {
                 System.out.println("\nYou entered invalid data\n");

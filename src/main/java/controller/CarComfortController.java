@@ -82,12 +82,12 @@ public class CarComfortController {
         handleException(() -> {
             System.out.println("\nChoose car comfort you wanna update:");
             CarComfort carComfort = chooseCarComfortByPosition();
-            chooseForUpdate(carComfort);
+            chooseAndUpdate(carComfort);
             System.out.println(carComfort);
         });
     }
 
-    private void chooseForUpdate(CarComfort carComfort) {
+    private void chooseAndUpdate(CarComfort carComfort) {
         int choose;
         System.out.println("\n1 - Name\n2 - Description\n");
         choose = Integer.parseInt(scanner.nextLine());
@@ -108,11 +108,11 @@ public class CarComfortController {
         }
         carComfortService.update(carComfort);
         System.out.println("\nCar comfort was updated successfully\n");
+        System.out.println(carComfort.toString());
     }
 
     private void deleteCarComfort() {
         handleException(() -> {
-            //System.out.println("\nChoose car comfort you wanna delete:");
             CarComfort carComfort = chooseCarComfortByPosition();
             if (carComfortService.delete(carComfort.getId())) {
                 System.out.println("\nCar comfort was deleted successfully\n");

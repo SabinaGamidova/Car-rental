@@ -35,6 +35,6 @@ public class Engine {
     }
 
     public String toShortString() {
-        return String.format(" | Max speed: %-5d| Volume: %-5f | Fuel consumption: %f\n", maxSpeed, volume, fuelConsumption);
+        return String.format(" | Max speed: %-5d| Volume: %-5.2f | Fuel consumption: %.2f\n", maxSpeed, volume, fuelConsumption);
     }
 }
