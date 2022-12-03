@@ -172,7 +172,6 @@ public class EngineController {
 
     private void deleteEngine() {
         handleException(() -> {
-            //System.out.println("\nChoose engine you wanna delete:");
             Engine engine = chooseEngineByPosition();
             if (engineService.delete(engine.getId())) {
                 System.out.println("\nEngine was deleted successfully\n");

@@ -34,38 +34,71 @@ public class CarController {
 
     public void programInterface() {
         handleException(() -> {
-            if(sessionService.isUserAuthenticated()){
-                Session session = sessionService.getActive();
-                while (true) {
-                    if (userService.isManager(session.getUserId())) {
-                        System.out.println("\n\nChoose item:\n1 - Insert new car\n" +
-                                "2 - Get all cars\n" +
-                                "3 - Get car by id\n" +
-                                "4 - Get all cars by car type\n" +
-                                "5 - Get all cars by car comfort\n" +
-                                "6 - Update car\n" +
-                                "7 - Delete car\n" +
-                                "8 - Return");
-                        int choose = Integer.parseInt(scanner.nextLine());
-                        switch (choose) {
-                            case 1 -> insertCar();
-                            case 2 -> getAllCars();
-                            case 3 -> getCarById();
-                            case 4 -> getCarsByCarType();
-                            case 5 -> getCarsByCarComfort();
-                            case 6 -> chooseAndUpdate();
-                            case 7 -> deleteCar();
-                            case 8 -> {
-                                return;
-                            }
-                            default -> System.out.println("\n\nEntered incorrect data");
-                        }
-                    } else {
-                        return;
-                    }
-                }
+            Session session = sessionService.getActive();
+            if (userService.isManager(session.getUserId())) {
+                managerInterface();
+            } else {
+                userInterface();
             }
         });
+    }
+
+
+    private void managerInterface() {
+        if(sessionService.isUserAuthenticated()){
+            Session session = sessionService.getActive();
+            while (true) {
+                if (userService.isManager(session.getUserId())) {
+                    System.out.println("\n\nChoose item:\n1 - Insert new car\n" +
+                            "2 - Get all cars\n" +
+                            "3 - Get car by id\n" +
+                            "4 - Get all cars by car type\n" +
+                            "5 - Get all cars by car comfort\n" +
+                            "6 - Update car\n" +
+                            "7 - Delete car\n" +
+                            "8 - Return");
+                    int choose = Integer.parseInt(scanner.nextLine());
+                    switch (choose) {
+                        case 1 -> insertCar();
+                        case 2 -> getAllCars();
+                        case 3 -> getCarById();
+                        case 4 -> getCarsByCarType();
+                        case 5 -> getCarsByCarComfort();
+                        case 6 -> chooseAndUpdate();
+                        case 7 -> deleteCar();
+                        case 8 -> {
+                            return;
+                        }
+                        default -> System.out.println("\n\nEntered incorrect data");
+                    }
+                } else {
+                    return;
+                }
+            }
+        }
+    }
+
+
+    private void userInterface() {
+        if(sessionService.isUserAuthenticated()){
+            Session session = sessionService.getActive();
+            while (true) {
+                    System.out.println("\n\nChoose item:\n1 - Get all cars\n" +
+                            "2 - Get all cars by car type\n" +
+                            "3 - Get all cars by car comfort\n" +
+                            "4 - Return");
+                    int choose = Integer.parseInt(scanner.nextLine());
+                    switch (choose) {
+                        case 1 -> getAllCars();
+                        case 2 -> getCarsByCarType();
+                        case 3 -> getCarsByCarComfort();
+                        case 4 -> {
+                            return;
+                        }
+                        default -> System.out.println("\n\nEntered incorrect data");
+                    }
+            }
+        }
     }
 
 
@@ -210,7 +243,6 @@ public class CarController {
 
     private void deleteCar() {
         handleException(() -> {
-            //System.out.println("\nChoose car you wanna delete:");
             Car car = chooseCarByPosition();
             if (carService.delete(car.getId())) {
                 System.out.println("\nCar was deleted successfully\n");
@@ -222,18 +254,6 @@ public class CarController {
 
 
     private Car chooseCarByPosition() {
-/*
-        System.out.println();
-        getAllCars();
-        System.out.println("\n\nEnter the position of necessary car:");
-        int position = Integer.parseInt(scanner.nextLine());
-        System.out.println();
-        List<Car> cars = carService.getAll();
-        if (position <= 0 || position > cars.size() + 1) {
-            throw new CarRentalException("\nIncorrect position entered");
-        }
-        return cars.get(position - 1);
-*/
         List<Car> car = carService.getAll();
         if (car.isEmpty()) {
             throw new CarRentalException("\nNo cars exist yet");

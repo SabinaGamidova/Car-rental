@@ -63,11 +63,12 @@ public class Controller {
     private void authenticatedUserInterface() {
         handleException(() -> {
             System.out.println("\nChoose the item:\n" +
-                    "1 - Account actions\n2 - Order operations\n0 - Log out");
+                    "1 - Account actions\n2 - Car operations\n3 - Order operations\n0 - Log out");
             int choose = Integer.parseInt(scanner.nextLine());
             switch (choose) {
                 case 1 -> userController.programInterface();
-                case 2 -> orderController.programInterface();
+                case 2 -> carController.programInterface();
+                case 3 -> orderController.programInterface();
                 case 0 -> authController.logOut();
                 default -> System.out.println("Entered incorrect data");
             }
