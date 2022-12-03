@@ -41,4 +41,15 @@ public class User {
 
     @Mappable(columnNumber = 9, dataType = Boolean.class)
     private boolean status;
+
+    @Override
+    public String toString() {
+        return "\nFull name: " + name + " " + surname + " " +
+                patronymic + "\nEmail: " + email + "\nDate of birth: " + dateOfBirth + "\n";
+    }
+
+    public String toShortString() {
+        return String.format(" | Full name: %-10s %-10s %-20s| Email: %-20s | Date of birth: %s\n", name, surname,
+                patronymic, email, dateOfBirth);
+    }
 }

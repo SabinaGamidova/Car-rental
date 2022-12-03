@@ -7,6 +7,7 @@ import mapper.Mapper;
 import models.cars.Car;
 import models.cars.CarComfort;
 import models.cars.CarType;
+import util.DateTimeUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -82,7 +84,7 @@ public class CarRepository {
     }
 
     public Car update(Car car) {
-        String UPDATE = "UPDATE car SET number = ?, brand = ?, model = ?, car_type_id = ?, car_comfort_id = ?, engine_id = ?, price = ?, deposit = ? WHERE id = ? AND status;";
+        String UPDATE = "UPDATE car SET number = ?, brand = ?, model = ?, car_type_id = ?, car_comfort_id = ?, engine_id = ?, price = ?, deposit = ?, status=? WHERE id = ? AND status;";
         try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
             statement.setString(1, car.getNumber());
             statement.setString(2, car.getBrand());
@@ -92,6 +94,8 @@ public class CarRepository {
             statement.setObject(6, car.getEngineId());
             statement.setDouble(7, car.getPrice());
             statement.setDouble(8, car.getDeposit());
+            statement.setBoolean(9, car.isStatus());
+            statement.setObject(10, car.getId());
             statement.execute();
             return car;
         } catch (SQLException exception) {

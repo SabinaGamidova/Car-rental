@@ -497,7 +497,7 @@ public class OrderServiceTest {
 
         when(orderRepositoryMock.getByUserId(id)).thenReturn(orders);
 
-        List<Order> response = orderService.getByUserId(id);
+        List<Order> response = orderService.getOrdersByUserId(id);
 
         assertNotNull(response);
         assertEquals(orders.size(), response.size());
@@ -513,7 +513,7 @@ public class OrderServiceTest {
         String exceptionMessage = "User id must be NOT null";
 
         CarRentalException exception = assertThrows(
-                CarRentalException.class, () -> orderService.getByUserId(null));
+                CarRentalException.class, () -> orderService.getOrdersByUserId(null));
 
         assertNotNull(exception);
         assertEquals(exceptionMessage, exception.getMessage());

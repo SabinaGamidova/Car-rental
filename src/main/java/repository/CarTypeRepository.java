@@ -71,10 +71,11 @@ public class CarTypeRepository {
     }
 
     public CarType update(CarType carType) {
-        String UPDATE = "UPDATE car_type SET name = ? WHERE id = ? AND status;";
+        String UPDATE = "UPDATE car_type SET name = ?, status=? WHERE id = ? AND status;";
         try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
             statement.setString(1, carType.getName());
-            statement.setObject(2, carType.getId());
+            statement.setBoolean(2, carType.isStatus());
+            statement.setObject(3, carType.getId());
             statement.execute();
             return carType;
         } catch (SQLException exception) {

@@ -77,12 +77,13 @@ public class CarComfortRepository {
 
 
     public CarComfort update(CarComfort carComfort) {
-        String UPDATE = "UPDATE car_comfort SET name = ?, description = ? WHERE id = ? AND status";
+        String UPDATE = "UPDATE car_comfort SET name = ?, description = ?, status=? WHERE id = ? AND status";
         try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
 
             statement.setString(1, carComfort.getName());
             statement.setString(2, carComfort.getDescription());
-            statement.setObject(3, carComfort.getId());
+            statement.setBoolean(3, carComfort.isStatus());
+            statement.setObject(4, carComfort.getId());
 
             statement.execute();
             return carComfort;

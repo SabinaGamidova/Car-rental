@@ -19,4 +19,14 @@ public class CarType {
     private String name;
     @Mappable(columnNumber = 3, dataType = Boolean.class)
     private boolean status;
+
+
+    @Override
+    public String toString() {
+        return "\nName: " + name + "\n";
+    }
+
+    public String toShortString() {
+        return String.format(" | Name: %-10s |\n", name);
+    }
 }

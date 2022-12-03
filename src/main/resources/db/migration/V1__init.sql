@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS "user"(
 
 CREATE TABLE IF NOT EXISTS transmission_type(
 	id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	name TEXT NOT NULL,
+	name TEXT NOT NULL UNIQUE,
 	status BOOLEAN NOT NULL DEFAULT TRUE
 );
 
@@ -40,11 +40,11 @@ VALUES
 
 CREATE TABLE IF NOT EXISTS fuel_type(
 	id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	description TEXT NOT NULL,
+	name TEXT NOT NULL UNIQUE,
 	status BOOLEAN NOT NULL DEFAULT TRUE
 );
 
-INSERT INTO fuel_type(description)
+INSERT INTO fuel_type(name)
 VALUES
 ('Petrol'),
 ('Diesel'),
@@ -108,13 +108,12 @@ CREATE TABLE IF NOT EXISTS car(
 	CONSTRAINT engine_id_fk FOREIGN KEY (engine_id) REFERENCES engine (id)
 );
 
-
 CREATE TABLE IF NOT EXISTS "order"(
 	id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
 	client_id UUID NOT NULL,
 	car_id UUID NOT NULL,
-	"from" DATE NOT NULL DEFAULT NOW(),
-	"to" DATE NOT NULL DEFAULT NOW(),
+	"from" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	"to" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 	total_price DOUBLE PRECISION NOT NULL,
 	status BOOLEAN NOT NULL DEFAULT TRUE,
 	CONSTRAINT client_id_fk FOREIGN KEY (client_id) REFERENCES "user" (id),

@@ -5,17 +5,24 @@ import exception.CarRentalException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import models.cars.Car;
+import models.order.Order;
 import org.apache.commons.lang3.StringUtils;
 import repository.CarRepository;
+import repository.OrderRepository;
+import util.DateTimeUtil;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
 public class CarService implements CarInterface, Transactionable {
     private final CarRepository carRepository;
+    private final OrderRepository orderRepository;
+
 
     @Override
     public Car insert(Car car) {
@@ -43,6 +50,24 @@ public class CarService implements CarInterface, Transactionable {
     }
 
     @Override
+    public List<Car> getAvailable(Date from, Date to) {
+        log.info("Trying to get available cars");
+        DateTimeUtil.validateWithToday(from);
+        DateTimeUtil.validateWithToday(to);
+        DateTimeUtil.validateDates(from, to);
+        List<Order> orders = orderRepository.getOrdersBetweenDates(from, to);
+        return carRepository.getAll()
+                .stream()
+                .filter(car -> isAvailableCar(orders, car))
+                .collect(Collectors.toList());
+    }
+
+    private boolean isAvailableCar(List<Order> orders, Car car){
+        return orders.stream().noneMatch(order -> order.getCarId().equals(car.getId()));
+    }
+
+
+    @Override
     public Car update(Car car) {
         log.info("Trying to update car {}", car);
         validateCar(car);
@@ -68,6 +93,7 @@ public class CarService implements CarInterface, Transactionable {
             return car.isStatus() != Boolean.TRUE;
         });
     }
+
 
     @Override
     public List<Car> getByCarType(UUID carTypeId) {

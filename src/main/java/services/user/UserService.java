@@ -16,19 +16,21 @@ import services.session.SessionService;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Pattern;
+
+import static services.user.PasswordSize.MAX_SIZE;
+import static services.user.PasswordSize.MIN_SIZE;
 
 
 @Slf4j
 @AllArgsConstructor
 public class UserService implements UserInterface, Transactionable {
-    //private static final String EMAIL_PATTERN = "^(.+)@(\\S+) $.";
-    //private static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
+    private static final String EMAIL_PATTERN = "^(.+)@(.+)$";
+    private static final String PASSWORD_PATTERN = ".*([a-zA-Z].*[0-9]|[0-9].*[a-zA-Z]).*";
     private final UserRepository userRepository;
     private final SessionService sessionService;
     private final RoleRepository roleRepository;
 
-
-    //TODO добавить метод для инициализации дефолтного админа (вызывается в Application)
 
     @Override
     public boolean isManager(UUID userId) {
@@ -47,9 +49,11 @@ public class UserService implements UserInterface, Transactionable {
         }
         Role userRole = roleRepository.getUserRole();
         user.setRoleId(userRole.getId());
+        validatePassword(user.getPassword());
         String encodedPassword = PasswordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         User registeredUser = insert(user);
+        sessionService.open(user.getEmail());
         log.info("User has been registered successfully");
         return registeredUser;
     }
@@ -171,7 +175,6 @@ public class UserService implements UserInterface, Transactionable {
         }
         validateFields(user);
         validateEmail(user.getEmail());
-        validatePassword(user.getPassword());
     }
 
     private void validateFields(User user) {
@@ -186,14 +189,14 @@ public class UserService implements UserInterface, Transactionable {
     }
 
     private void validateEmail(String email) {
-        /*if (!Pattern.compile(EMAIL_PATTERN).matcher(email).matches()) {
+        if (!Pattern.compile(EMAIL_PATTERN).matcher(email).matches()) {
             log.warn("User email has invalid format {}", email);
             throw new CarRentalException("User email has invalid format");
-        }*/
+        }
     }
 
     private void validatePassword(String password) {
-       /* boolean patternMatch = Pattern
+        boolean patternMatch = Pattern
                 .compile(PASSWORD_PATTERN)
                 .matcher(password)
                 .matches();
@@ -201,6 +204,6 @@ public class UserService implements UserInterface, Transactionable {
                 password.length() > MAX_SIZE.getValue() || !patternMatch){
             log.warn("User password has invalid format {}", password);
             throw new CarRentalException("User password has invalid format (size must be %d-%d and contains at least one symbol and number)", MIN_SIZE.getValue(), MAX_SIZE.getValue());
-        }*/
+        }
     }
 }
