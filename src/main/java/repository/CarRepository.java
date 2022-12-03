@@ -164,30 +164,4 @@ public class CarRepository {
             throw new CarRentalException(exception.getMessage());
         }
     }
-
-    public List<Car> getAvailable(Date from, Date to) {
-        String GET_AVAILABLE = "SELECT DISTINCT car.* FROM car " +
-                "LEFT JOIN \"order\" ON \"order\".car_id = car.id " +
-                "WHERE (\"order\".\"to\" <= ?) OR (\"order\".\"from\" >= ?) " +
-                "AND car.status " +
-                "AND \"order\".status OR \"order\".status IS NULL " +
-                "AND \"order\".\"to\" >= NOW() OR \"order\".\"to\" IS NULL;";
-        try (PreparedStatement statement = connection.prepareStatement(GET_AVAILABLE)) {
-            statement.setDate(1, DateTimeUtil.toSqlDate(from));
-            statement.setDate(2, DateTimeUtil.toSqlDate(to));
-            ResultSet resultSet = statement.executeQuery();
-
-            List<Car> list = new ArrayList<>();
-            while (resultSet.next()) {
-                Car car = (Car) Mapper.mapSingleFromResultSet(resultSet, Car.class);
-                list.add(car);
-            }
-
-            resultSet.close();
-            return list;
-        } catch (SQLException exception) {
-            log.error("Can not process statement", exception);
-            throw new CarRentalException(exception.getMessage());
-        }
-    }
 }
