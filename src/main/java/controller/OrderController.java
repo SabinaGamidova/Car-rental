@@ -31,11 +31,13 @@ public class OrderController {
 
     public void programInterface() {
         handleException(() -> {
-            Session session = sessionService.getActive();
-            if (userService.isManager(session.getUserId())) {
-                managerInterface();
-            } else {
-                userInterface();
+            if (sessionService.isUserAuthenticated()) {
+                Session session = sessionService.getActive();
+                if (userService.isManager(session.getUserId())) {
+                    managerInterface();
+                } else {
+                    userInterface();
+                }
             }
         });
     }
@@ -43,28 +45,24 @@ public class OrderController {
 
     private void managerInterface() {
         while (true) {
-            if (sessionService.isUserAuthenticated()) {
-                System.out.println("\nChoose item:\n1 - Form order\n" +
-                        "2 - Get all orders\n3 - Update order\n" +
-                        "4 - Delete order\n5 - Get your orders\n" +
-                        "6 - Get orders between dates\n" +
-                        "7 - Get your orders between dates\n8 - Return");
-                int choose = Integer.parseInt(scanner.nextLine());
-                switch (choose) {
-                    case 1 -> formOrder();
-                    case 2 -> getAll();
-                    case 3 -> chooseAndUpdateForUser();
-                    case 4 -> deleteOrder();
-                    case 5 -> getOrdersByUserId();
-                    case 6 -> getOrdersBetweenDates();
-                    case 7 -> getUserOrdersBetweenDates();
-                    case 8 -> {
-                        return;
-                    }
-                    default -> System.out.println("\nEntered incorrect data");
+            System.out.println("\nChoose item:\n1 - Form order\n" +
+                    "2 - Get all orders\n3 - Update order\n" +
+                    "4 - Delete order\n5 - Get your orders\n" +
+                    "6 - Get orders between dates\n" +
+                    "7 - Get your orders between dates\n8 - Return");
+            int choose = Integer.parseInt(scanner.nextLine());
+            switch (choose) {
+                case 1 -> formOrder();
+                case 2 -> getAll();
+                case 3 -> chooseAndUpdateForUser();
+                case 4 -> deleteOrder();
+                case 5 -> getOrdersByUserId();
+                case 6 -> getOrdersBetweenDates();
+                case 7 -> getUserOrdersBetweenDates();
+                case 8 -> {
+                    return;
                 }
-            } else {
-                return;
+                default -> System.out.println("\nEntered incorrect data");
             }
         }
     }
@@ -72,25 +70,21 @@ public class OrderController {
 
     private void userInterface() {
         while (true) {
-            if (sessionService.isUserAuthenticated()) {
-                System.out.println("\nChoose item:\n1 - Form order\n" +
-                        "2 - Update order\n" +
-                        "3 - Delete order\n4 - Get your orders\n" +
-                        "5 - Get your orders between dates\n6 - Return");
-                int choose = Integer.parseInt(scanner.nextLine());
-                switch (choose) {
-                    case 1 -> formOrder();
-                    case 2 -> chooseAndUpdateForUser();
-                    case 3 -> deleteOrder();
-                    case 4 -> getOrdersByUserId();
-                    case 5 -> getUserOrdersBetweenDates();
-                    case 6 -> {
-                        return;
-                    }
-                    default -> System.out.println("\nEntered incorrect data");
+            System.out.println("\nChoose item:\n1 - Form order\n" +
+                    "2 - Update order\n" +
+                    "3 - Delete order\n4 - Get your orders\n" +
+                    "5 - Get your orders between dates\n6 - Return");
+            int choose = Integer.parseInt(scanner.nextLine());
+            switch (choose) {
+                case 1 -> formOrder();
+                case 2 -> chooseAndUpdateForUser();
+                case 3 -> deleteOrder();
+                case 4 -> getOrdersByUserId();
+                case 5 -> getUserOrdersBetweenDates();
+                case 6 -> {
+                    return;
                 }
-            } else {
-                return;
+                default -> System.out.println("\nEntered incorrect data");
             }
         }
     }
@@ -184,7 +178,7 @@ public class OrderController {
             Date dateTo = DateTimeUtil.parseFromString(scanner.nextLine());
 
             List<Order> orders = orderService.getBetweenDates(dateFrom, dateTo);
-            if(orders.isEmpty()){
+            if (orders.isEmpty()) {
                 throw new CarRentalException("\nNo orders in this range");
             }
 
@@ -206,7 +200,7 @@ public class OrderController {
             Date dateTo = DateTimeUtil.parseFromString(scanner.nextLine());
 
             List<Order> orders = orderService.getUserOrdersBetweenDates(session.getUserId(), dateFrom, dateTo);
-            if(orders.isEmpty()){
+            if (orders.isEmpty()) {
                 throw new CarRentalException("\nNo orders in this range");
             }
 

@@ -34,69 +34,61 @@ public class CarController {
 
     public void programInterface() {
         handleException(() -> {
-            Session session = sessionService.getActive();
-            if (userService.isManager(session.getUserId())) {
-                managerInterface();
-            } else {
-                userInterface();
+            if (sessionService.isUserAuthenticated()) {
+                Session session = sessionService.getActive();
+                if (userService.isManager(session.getUserId())) {
+                    managerInterface();
+                } else {
+                    userInterface();
+                }
             }
         });
     }
 
 
     private void managerInterface() {
-        if(sessionService.isUserAuthenticated()){
-            Session session = sessionService.getActive();
-            while (true) {
-                if (userService.isManager(session.getUserId())) {
-                    System.out.println("\n\nChoose item:\n1 - Insert new car\n" +
-                            "2 - Get all cars\n" +
-                            "3 - Get car by id\n" +
-                            "4 - Get all cars by car type\n" +
-                            "5 - Get all cars by car comfort\n" +
-                            "6 - Update car\n" +
-                            "7 - Delete car\n" +
-                            "8 - Return");
-                    int choose = Integer.parseInt(scanner.nextLine());
-                    switch (choose) {
-                        case 1 -> insertCar();
-                        case 2 -> getAllCars();
-                        case 3 -> getCarById();
-                        case 4 -> getCarsByCarType();
-                        case 5 -> getCarsByCarComfort();
-                        case 6 -> chooseAndUpdate();
-                        case 7 -> deleteCar();
-                        case 8 -> {
-                            return;
-                        }
-                        default -> System.out.println("\n\nEntered incorrect data");
-                    }
-                } else {
+        while (true) {
+            System.out.println("\n\nChoose item:\n1 - Insert new car\n" +
+                    "2 - Get all cars\n" +
+                    "3 - Get car by id\n" +
+                    "4 - Get all cars by car type\n" +
+                    "5 - Get all cars by car comfort\n" +
+                    "6 - Update car\n" +
+                    "7 - Delete car\n" +
+                    "8 - Return");
+            int choose = Integer.parseInt(scanner.nextLine());
+            switch (choose) {
+                case 1 -> insertCar();
+                case 2 -> getAllCars();
+                case 3 -> getCarById();
+                case 4 -> getCarsByCarType();
+                case 5 -> getCarsByCarComfort();
+                case 6 -> chooseAndUpdate();
+                case 7 -> deleteCar();
+                case 8 -> {
                     return;
                 }
+                default -> System.out.println("\n\nEntered incorrect data");
             }
         }
     }
 
 
     private void userInterface() {
-        if(sessionService.isUserAuthenticated()){
-            Session session = sessionService.getActive();
-            while (true) {
-                    System.out.println("\n\nChoose item:\n1 - Get all cars\n" +
-                            "2 - Get all cars by car type\n" +
-                            "3 - Get all cars by car comfort\n" +
-                            "4 - Return");
-                    int choose = Integer.parseInt(scanner.nextLine());
-                    switch (choose) {
-                        case 1 -> getAllCars();
-                        case 2 -> getCarsByCarType();
-                        case 3 -> getCarsByCarComfort();
-                        case 4 -> {
-                            return;
-                        }
-                        default -> System.out.println("\n\nEntered incorrect data");
-                    }
+        while (true) {
+            System.out.println("\n\nChoose item:\n1 - Get all cars\n" +
+                    "2 - Get all cars by car type\n" +
+                    "3 - Get all cars by car comfort\n" +
+                    "4 - Return");
+            int choose = Integer.parseInt(scanner.nextLine());
+            switch (choose) {
+                case 1 -> getAllCars();
+                case 2 -> getCarsByCarType();
+                case 3 -> getCarsByCarComfort();
+                case 4 -> {
+                    return;
+                }
+                default -> System.out.println("\n\nEntered incorrect data");
             }
         }
     }
