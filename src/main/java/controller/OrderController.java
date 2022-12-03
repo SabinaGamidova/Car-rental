@@ -260,11 +260,12 @@ public class OrderController {
 
 
     private Car chooseCarByPosition(Date from, Date to) {
-        List<Car> cars = carService.getAvailableCars(from, to);
+        List<Car> cars = carService.getAvailable(from, to);
         if (cars.isEmpty()) {
-            throw new CarRentalException("\nNo cars exist, firstly create car");
+            throw new CarRentalException("\nNo available cars");
         }
         AtomicInteger counter = new AtomicInteger(1);
+        System.out.println();
         cars.forEach(carComfort -> System.out.println("#" + counter.getAndIncrement() + carComfort.toShortString()));
         System.out.println("\nEnter the position of necessary car:");
         int position = Integer.parseInt(scanner.nextLine());

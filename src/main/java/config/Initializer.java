@@ -53,7 +53,7 @@ public class Initializer {
         AuthService authService = new AuthService(userService, sessionService);
         CarTypeService carTypeService = new CarTypeService(carTypeRepository);
         CarComfortService carComfortService = new CarComfortService(carComfortRepository);
-        CarService carService = new CarService(carRepository);
+        CarService carService = new CarService(carRepository, orderRepository);
         EngineService engineService = new EngineService(engineRepository);
         FuelTypeService fuelTypeService = new FuelTypeService(fuelTypeRepository);
         TransmissionTypeService transmissionTypeService =

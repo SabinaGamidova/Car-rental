@@ -127,11 +127,16 @@ public class OrderRepository {
     }
 
     public List<Order> getOrdersBetweenDates(Date from, Date to) {
-        String GET_ORDER_BETWEEN_DATES = "SELECT * FROM \"order\" WHERE (\"from\" >= ? AND \"to\" <= ?) AND status";
+        String GET_ORDER_BETWEEN_DATES = "SELECT * FROM \"order\" " +
+                "WHERE (\"from\" <= ? AND \"to\" <= ?) " +
+                "OR (\"from\" <= ? AND \"to\" >= ?) " +
+                "AND status;";
         try (PreparedStatement statement = connection.prepareStatement(GET_ORDER_BETWEEN_DATES)) {
 
             statement.setDate(1, DateTimeUtil.toSqlDate(from));
             statement.setDate(2, DateTimeUtil.toSqlDate(to));
+            statement.setDate(3, DateTimeUtil.toSqlDate(to));
+            statement.setDate(4, DateTimeUtil.toSqlDate(to));
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -151,12 +156,17 @@ public class OrderRepository {
     }
 
     public List<Order> getUserOrdersBetweenDates(UUID userId, Date from, Date to) {
-        String GET_USER_ORDERS_BETWEEN_DATES = "SELECT * FROM \"order\" WHERE client_id = ? AND (\"from\" >= ? AND \"to\" <= ?) AND status";
+        String GET_USER_ORDERS_BETWEEN_DATES = "SELECT * FROM \"order\" " +
+                "WHERE (\"from\" <= ? AND \"to\" <= ?) " +
+                "OR (\"from\" <= ? AND \"to\" >= ?) " +
+                "AND client_id = ? AND status;";
         try (PreparedStatement statement = connection.prepareStatement(GET_USER_ORDERS_BETWEEN_DATES)) {
 
-            statement.setObject(1, userId);
-            statement.setDate(2, DateTimeUtil.toSqlDate(from));
+            statement.setDate(1, DateTimeUtil.toSqlDate(from));
+            statement.setDate(2, DateTimeUtil.toSqlDate(to));
             statement.setDate(3, DateTimeUtil.toSqlDate(to));
+            statement.setDate(4, DateTimeUtil.toSqlDate(to));
+            statement.setObject(5, userId);
 
             ResultSet resultSet = statement.executeQuery();
 
